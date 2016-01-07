@@ -5,7 +5,7 @@ export VirtualArray, getindex, setindex!, size, length
 import Base.size, Base.getindex, Base.length, Base.setindex!
 
 type VirtualArray{T,N} <: AbstractArray{Array{T,N},1}
-    expanded_dim::UInt # This is the dimension we expand along
+    expanded_dim::Int # This is the dimension we expand along
     parents::Array{Array{T,N},1}
 
     function VirtualArray(expanded_dim::Int, parents::AbstractArray{T,N}...)
@@ -16,43 +16,48 @@ type VirtualArray{T,N} <: AbstractArray{Array{T,N},1}
     end
 end
 
-function size(V::VirtualArray)
-    total = 0
-    for parent in V.parents
-        total += length(parent)
+function size(v::VirtualArray)
+    result = [0]
+    if !isempty(v.parents)
+        expanded_size = 0
+        for parent in v.parents
+            expanded_size += size(parent)[v.expanded_dim]
+        end
+        result = collect(size(v.parents[1]))
+        result[v.expanded_dim] = expanded_size
     end
-    return (total,)
+    return tuple(result...)
 end
 
-function length(V::VirtualArray)
+function length(v::VirtualArray)
     total = 0
-    for parent in V.parents
+    for parent in v.parents
         total += length(parent)
     end
     return total
 end
 
-function getindex{T,N}(V::VirtualArray{T,N}, I::Int...)
-    index = I[1]
-    for parent in V.parents
+function getindex{T,N}(v::VirtualArray{T,N}, i::Int...)
+    index = i[1]
+    for parent in v.parents
         if index <= length(parent)
             return parent[index]
         end
         index -= length(parent)
     end
-    throw(BoundsError(V, I))
+    throw(BoundsError(v, i))
 end
 
-function setindex!{T,N}(V::VirtualArray{T,N}, v, I::Int...)
-    index = I[1]
-    for parent in V.parents
+function setindex!{T,N}(v::VirtualArray{T,N}, n, i::Int...)
+    index = i[1]
+    for parent in v.parents
         if index <= length(parent)
-            parent[index] = v
+            parent[index] = n
             return
         end
         index -= length(parent)
     end
-    throw(BoundsError(V, I))
+    throw(BoundsError(v, i))
 end
 
 end # module
