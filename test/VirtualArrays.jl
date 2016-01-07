@@ -178,6 +178,26 @@ facts("Errors while using VirtualArray") do
         @fact_throws BoundsError test[-1]
         @fact_throws BoundsError test[len*(num_parents)+1]
     end
+    context("out of bounds setting on 1 1d array") do
+        len = rand(1:100)
+        a = rand(len)
+        test = VirtualArray{Float64, 1}(a)
+        @fact_throws BoundsError test[-1] = 1
+        @fact_throws BoundsError test[len+1] = 1
+    end
+    context("out of bounds setting on multiple 1d arrays") do
+        # set up
+        num_parents = rand(3:10)
+        len = rand(1:100)
+
+        parents = []
+        for i in 1:num_parents
+            push!(parents, rand(len))
+        end
+        test = VirtualArray{Float64, 1}(parents...)
+        @fact_throws BoundsError test[-1] = 1
+        @fact_throws BoundsError test[len*(num_parents)+1] = 1
+    end
 end
 
 function vitual_array_equale_to_array(v::VirtualArray, a::AbstractArray)
