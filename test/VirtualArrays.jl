@@ -65,6 +65,21 @@ facts("Creating a VirtualArray") do
         @fact size(test) --> size(expected)
         @fact test --> test_2
     end
+    context("1 2 dimensional parent") do
+        # set up
+        len = rand(2:4)
+
+        a = rand(len,len)
+
+        expected = cat(1, a)
+        test = VirtualArray{Float64, 2}(a)
+
+        @fact test.parents[1] --> a
+        @fact length(test.parents) --> 1
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
+        @pending test --> expected
+    end
     context("2 dimensional parents") do
         # set up
         len = rand(2:4)
@@ -78,6 +93,25 @@ facts("Creating a VirtualArray") do
         @fact test.parents[1] --> a
         @fact test.parents[2] --> b
         @fact length(test.parents) --> 2
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
+        @pending test --> expected
+    end
+    context("multiple 2 dimensional parents") do
+        # set up
+        num = rand(1:1000)
+        num_parents = rand(3:10)
+        len = rand(1:100)
+
+        parents = []
+        for i in 1:num_parents
+            push!(parents, rand(len,len))
+        end
+
+        expected = cat(1, parents...)
+        test = VirtualArray{Float64, 2}(parents...)
+
+        @fact length(test.parents) --> num_parents
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
         @pending test --> expected
