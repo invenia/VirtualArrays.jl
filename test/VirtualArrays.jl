@@ -44,9 +44,15 @@ facts("Creating a VirtualArray") do
         for i in 1:num_parents
             push!(parents, collect(num:num+len-1))
         end
+
+        expected = cat(1, parents...)
         test = VirtualArray{Int64, 1}(parents...)
+
         @fact test.parents --> parents
         @fact length(test.parents) --> num_parents
+        @pending test --> expected
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
     end
     context("2 dimensional parents") do
         # set up
@@ -69,16 +75,22 @@ facts("Modifying values in a VirtualArray") do
         # set up
         num = rand(1:1000)
         len = rand(1:100)
-        num_pciked = rand(1:1000)
-        index_pciked = rand(1:len)
+        num_picked = rand(1:1000)
+        index_picked = rand(1:len)
 
         a = collect(num:num+len)
         b = collect(num:num+len)
+
+        expected = cat(1, a, b)
         test = VirtualArray{Int64, 1}(a,b)
-        test[index_pciked] = num_pciked
-        @fact test[index_pciked] --> num_pciked
-        @fact a[index_pciked] --> num_pciked
-        @fact b[index_pciked] --> num + index_pciked - 1
+
+        test[index_picked] = num_picked
+        expected[index_picked] = num_picked
+
+        @fact test[index_picked] --> num_picked
+        @fact a[index_picked] --> num_picked
+        @fact b[index_picked] --> num + index_picked - 1
+        @pending test --> expected
 
     end
     context("normal case changing one parent element in the first parent") do
@@ -86,16 +98,22 @@ facts("Modifying values in a VirtualArray") do
         # set up
         num = rand(1:1000)
         len = rand(1:100)
-        num_pciked = rand(1:1000)
-        index_pciked = rand(1:len)
+        num_picked = rand(1:1000)
+        index_picked = rand(1:len)
 
         a = collect(num:num+len)
         b = collect(num:num+len)
+
+        expected = cat(1, a, b)
         test = VirtualArray{Int64, 1}(a,b)
-        a[index_pciked] = num_pciked
-        @fact test[index_pciked] --> num_pciked
-        @fact a[index_pciked] --> num_pciked
-        @fact b[index_pciked] --> num + index_pciked - 1
+
+        a[index_picked] = num_picked
+        expected[index_picked] = num_picked
+
+        @fact test[index_picked] --> num_picked
+        @fact a[index_picked] --> num_picked
+        @fact b[index_picked] --> num + index_picked - 1
+        @pending test --> not(expected)
 
     end
     context("normal case changing one VirtualArray element in the any parent") do
@@ -112,10 +130,16 @@ facts("Modifying values in a VirtualArray") do
         for i in 1:num_parents
             push!(parents, collect(num:num+len-1))
         end
+
+        expected = cat(1, parents...)
         test = VirtualArray{Int64, 1}(parents...)
+
         test[(change_p-1)*len+change_i] = change_to
+        expected[(change_p-1)*len+change_i] = change_to
+
         @fact test[(change_p-1)*len+change_i] --> change_to
         @fact test.parents[change_p][change_i] --> change_to
+        @pending test --> expected
 
     end
     context("normal case changing one element in the any parent") do
@@ -132,10 +156,16 @@ facts("Modifying values in a VirtualArray") do
         for i in 1:num_parents
             push!(parents, collect(num:num+len-1))
         end
+
+        expected = cat(1, parents...)
         test = VirtualArray{Int64, 1}(parents...)
+
         test.parents[change_p][change_i] = change_to
+        expected[(change_p-1)*len+change_i] = change_to
+
         @fact test.parents[change_p][change_i] --> change_to
         @fact test[(change_p-1)*len+change_i] --> change_to
+        @pending test --> not(expected)
 
     end
     context("normal case changing multiple VirtualArray element") do
@@ -143,16 +173,16 @@ facts("Modifying values in a VirtualArray") do
         # set up
         num = rand(1:1000)
         length = rand(1:100)
-        num_pciked = rand(1:1000)
-        index_pciked = rand(1:length)
+        num_picked = rand(1:1000)
+        index_picked = rand(1:length)
 
         a = collect(num:num+length)
         b = collect(num:num+length)
         test = VirtualArray{Int64, 1}(a,b)
-        test[index_pciked] = num_pciked
-        @fact test[index_pciked] --> num_pciked
-        @fact a[index_pciked] --> num_pciked
-        @fact b[index_pciked] --> num + index_pciked - 1
+        test[index_picked] = num_picked
+        @fact test[index_picked] --> num_picked
+        @fact a[index_picked] --> num_picked
+        @fact b[index_picked] --> num + index_picked - 1
 
     end
 end
