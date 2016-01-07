@@ -2,6 +2,8 @@ module VirtualArrays
 
 export VirtualArray, getindex, setindex!, eltype, size, length
 
+import Base.size, Base.getindex, Base.length, Base.setindex!
+
 type VirtualArray{T,N} <: AbstractArray{Array{T,N},1}
     parents::Array{Array{T,N},1}
 
@@ -10,13 +12,8 @@ type VirtualArray{T,N} <: AbstractArray{Array{T,N},1}
     end
 end
 
-
-import Base.size
-import Base.getindex
-import Base.length
-import Base.setindex!
-
 eltype{T,N}(::Type{VirtualArray{T,N}}) = T
+
 function size(V::VirtualArray)
     total = 0
     for parent in V.parents
@@ -24,6 +21,7 @@ function size(V::VirtualArray)
     end
     return total
 end
+
 function length(V::VirtualArray)
     total = 0
     for parent in V.parents
