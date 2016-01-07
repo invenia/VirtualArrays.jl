@@ -1,6 +1,6 @@
 module VirtualArrays
 
-export VirtualArray, getindex, setindex!, eltype, size, length
+export VirtualArray, getindex, setindex!, size, length
 
 import Base.size, Base.getindex, Base.length, Base.setindex!
 
@@ -12,7 +12,6 @@ type VirtualArray{T,N} <: AbstractArray{Array{T,N},1}
     end
 end
 
-eltype{T,N}(::Type{VirtualArray{T,N}}) = T
 
 function size(V::VirtualArray)
     total = 0
