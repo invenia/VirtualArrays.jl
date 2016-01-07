@@ -4,14 +4,15 @@ facts("Creating a VirtualArray") do
         @pending isempty(test.parents) --> true
     end
     context("no parameters but has parametric constructors") do
-        expeted = []
+        expected = []
         test = VirtualArray{Any, 1}()
         test_2 = VirtualArray{Any, 1}(1)
 
         @fact isempty(test.parents) --> true
-        @fact length(test) --> length(expeted)
-        @fact size(test) --> size(expeted)
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
         @fact test --> test_2
+        @fact eachindex(test) --> eachindex(expected)
     end
     context("normal case") do
         # set up
@@ -31,17 +32,20 @@ facts("Creating a VirtualArray") do
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
         @fact test --> test_2
+        @fact eachindex(test) --> eachindex(expected)
     end
     context("one parent") do
         a = collect(1:9)
         test = VirtualArray{Int64, 1}(a)
         test_2 = VirtualArray{Int64, 1}(1, a)
+        expected = cat(1,a)
 
         @fact test.parents[1] --> a
         @fact length(test.parents) --> 1
-        @fact length(test) --> length(a)
-        @fact size(test) --> size(a)
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
         @fact test --> test_2
+        @fact eachindex(test) --> eachindex(expected)
     end
     context("multiple parent") do
         # set up
@@ -64,6 +68,7 @@ facts("Creating a VirtualArray") do
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
         @fact test --> test_2
+        @fact eachindex(test) --> eachindex(expected)
     end
     context("1 2 dimensional parent") do
         # set up
@@ -79,6 +84,7 @@ facts("Creating a VirtualArray") do
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
         @pending test --> expected
+        @fact eachindex(test) --> eachindex(expected)
     end
     context("2 dimensional parents") do
         # set up
@@ -96,6 +102,7 @@ facts("Creating a VirtualArray") do
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
         @pending test --> expected
+        @fact eachindex(test) --> eachindex(expected)
     end
     context("multiple 2 dimensional parents") do
         # set up
@@ -114,6 +121,7 @@ facts("Creating a VirtualArray") do
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
         @pending test --> expected
+        @fact eachindex(test) --> eachindex(expected)
     end
     context("1 multi dimensional parents") do
         # set up
@@ -133,6 +141,7 @@ facts("Creating a VirtualArray") do
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
         @pending test --> expected
+        @fact eachindex(test) --> eachindex(expected)
     end
     context("2 multi dimensional parents") do
         # set up
@@ -154,6 +163,7 @@ facts("Creating a VirtualArray") do
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
         @pending test --> expected
+        @fact eachindex(test) --> eachindex(expected)
     end
     context("multi multi dimensional parents") do
         # set up
@@ -177,6 +187,7 @@ facts("Creating a VirtualArray") do
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
         @pending test --> expected
+        @fact eachindex(test) --> eachindex(expected)
     end
 end
 

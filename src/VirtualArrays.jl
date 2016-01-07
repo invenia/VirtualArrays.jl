@@ -1,8 +1,8 @@
 module VirtualArrays
 
-export VirtualArray, getindex, setindex!, size, length
+export VirtualArray, getindex, setindex!, size, length, eachindex
 
-import Base.size, Base.getindex, Base.length, Base.setindex!
+import Base.size, Base.getindex, Base.length, Base.setindex!, Base.eachindex
 
 type VirtualArray{T,N} <: AbstractArray{Array{T,N},1}
     expanded_dim::Int # This is the dimension we expand along
@@ -15,6 +15,8 @@ type VirtualArray{T,N} <: AbstractArray{Array{T,N},1}
         return new(1, Array[parent for parent in parents])
     end
 end
+
+eachindex(v::VirtualArray) = 1:length(v)
 
 function size(v::VirtualArray)
     result = [0]
