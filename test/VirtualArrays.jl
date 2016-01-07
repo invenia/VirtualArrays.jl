@@ -22,7 +22,7 @@ facts("Creating a VirtualArray") do
         test = VirtualArray{Int64, 1}(a,b)
         @fact test.parents[1] --> a
         @fact test.parents[2] --> b
-        @pending test --> expected
+        @fact test --> expected
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
     end
@@ -50,7 +50,7 @@ facts("Creating a VirtualArray") do
 
         @fact test.parents --> parents
         @fact length(test.parents) --> num_parents
-        @pending test --> expected
+        @fact test --> expected
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
     end
@@ -90,7 +90,7 @@ facts("Modifying values in a VirtualArray") do
         @fact test[index_picked] --> num_picked
         @fact a[index_picked] --> num_picked
         @fact b[index_picked] --> num + index_picked - 1
-        @pending test --> expected
+        @fact test --> expected
 
     end
     context("normal case changing one parent element in the first parent") do
@@ -108,12 +108,12 @@ facts("Modifying values in a VirtualArray") do
         test = VirtualArray{Int64, 1}(a,b)
 
         a[index_picked] = num_picked
-        expected[index_picked] = num_picked
+        expected = cat(1, a, b)
 
         @fact test[index_picked] --> num_picked
         @fact a[index_picked] --> num_picked
         @fact b[index_picked] --> num + index_picked - 1
-        @pending test --> not(expected)
+        @fact test --> expected
 
     end
     context("normal case changing one VirtualArray element in the any parent") do
@@ -139,7 +139,7 @@ facts("Modifying values in a VirtualArray") do
 
         @fact test[(change_p-1)*len+change_i] --> change_to
         @fact test.parents[change_p][change_i] --> change_to
-        @pending test --> expected
+        @fact test --> expected
 
     end
     context("normal case changing one element in the any parent") do
@@ -160,12 +160,12 @@ facts("Modifying values in a VirtualArray") do
         expected = cat(1, parents...)
         test = VirtualArray{Int64, 1}(parents...)
 
-        test.parents[change_p][change_i] = change_to
-        expected[(change_p-1)*len+change_i] = change_to
+        parents[change_p][change_i] = change_to
+        expected = cat(1, parents...)
 
         @fact test.parents[change_p][change_i] --> change_to
         @fact test[(change_p-1)*len+change_i] --> change_to
-        @pending test --> not(expected)
+        @fact test --> expected
 
     end
     context("normal case changing multiple VirtualArray element") do
