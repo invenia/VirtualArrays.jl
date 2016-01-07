@@ -99,7 +99,6 @@ facts("Creating a VirtualArray") do
     end
     context("multiple 2 dimensional parents") do
         # set up
-        num = rand(1:1000)
         num_parents = rand(3:10)
         len = rand(1:100)
 
@@ -111,6 +110,69 @@ facts("Creating a VirtualArray") do
         expected = cat(1, parents...)
         test = VirtualArray{Float64, 2}(parents...)
 
+        @fact length(test.parents) --> num_parents
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
+        @pending test --> expected
+    end
+    context("1 multi dimensional parents") do
+        # set up
+        # keep these numbers small because we can run out of memory or get very slow tests
+        num_dims = rand(3:8) # no larger than 8
+        len = rand(1:5) # no larger than 5
+
+        dims = zeros(Int, num_dims) + len
+
+        a = rand(dims...)
+
+        expected = cat(1, a)
+        test = VirtualArray{Float64, num_dims}(a)
+
+        @fact test.parents[1] --> a
+        @fact length(test.parents) --> 1
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
+        @pending test --> expected
+    end
+    context("2 multi dimensional parents") do
+        # set up
+        # keep these numbers small because we can run out of memory or get very slow tests
+        num_dims = rand(3:8) # no larger than 8
+        len = rand(1:5) # no larger than 5
+
+        dims = zeros(Int, num_dims) + len
+
+        a = rand(dims...)
+        b = rand(dims...)
+
+        expected = cat(1, a, b)
+        test = VirtualArray{Float64, num_dims}(a, b)
+
+        @fact test.parents[1] --> a
+        @fact test.parents[2] --> b
+        @fact length(test.parents) --> 2
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
+        @pending test --> expected
+    end
+    context("multi multi dimensional parents") do
+        # set up
+        # keep these numbers small because we can run out of memory or get very slow tests
+        num_parents = 10# rand(3:10)
+        num_dims = rand(3:8) # no larger than 8
+        len = rand(1:5) # no larger than 5
+
+        dims = zeros(Int, num_dims) + len
+
+        parents = []
+        for i in 1:num_parents
+            push!(parents, rand(dims...))
+        end
+
+        expected = cat(1, parents...)
+        test = VirtualArray{Float64, num_dims}(parents...)
+
+        @fact test.parents --> parents
         @fact length(test.parents) --> num_parents
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
