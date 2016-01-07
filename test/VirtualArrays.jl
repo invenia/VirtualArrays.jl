@@ -4,8 +4,11 @@ facts("Creating a VirtualArray") do
         @pending isempty(test.parents) --> true
     end
     context("no parameters but has parametric constructors") do
-        @pending test = VirtualArray{Any, 1}()
-        @pending isempty(test.parents) --> true
+        expeted = []
+        test = VirtualArray{Any, 1}()
+        @fact isempty(test.parents) --> true
+        @fact length(test) --> length(expeted)
+        @fact size(test) --> size(expeted)
     end
     context("normal case") do
         # set up
@@ -14,16 +17,22 @@ facts("Creating a VirtualArray") do
 
         a = collect(num:num+len)
         b = collect(num:num+len)
+        expected = cat(1,a,b)
 
         test = VirtualArray{Int64, 1}(a,b)
         @fact test.parents[1] --> a
         @fact test.parents[2] --> b
+        @pending test --> expected
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
     end
     context("one parent") do
         a = collect(1:9)
         test = VirtualArray{Int64, 1}(a)
         @fact test.parents[1] --> a
         @fact length(test.parents) --> 1
+        @fact length(test) --> length(a)
+        @fact size(test) --> size(a)
     end
     context("multiple parent") do
         # set up

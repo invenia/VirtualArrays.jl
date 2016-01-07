@@ -19,7 +19,7 @@ function size(V::VirtualArray)
     for parent in V.parents
         total += length(parent)
     end
-    return total
+    return (total,)
 end
 
 function length(V::VirtualArray)
