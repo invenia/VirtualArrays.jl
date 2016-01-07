@@ -6,9 +6,12 @@ facts("Creating a VirtualArray") do
     context("no parameters but has parametric constructors") do
         expeted = []
         test = VirtualArray{Any, 1}()
+        test_2 = VirtualArray{Any, 1}(1)
+
         @fact isempty(test.parents) --> true
         @fact length(test) --> length(expeted)
         @fact size(test) --> size(expeted)
+        @fact test --> test_2
     end
     context("normal case") do
         # set up
@@ -20,19 +23,25 @@ facts("Creating a VirtualArray") do
         expected = cat(1,a,b)
 
         test = VirtualArray{Int64, 1}(a,b)
+        test_2 = VirtualArray{Int64, 1}(1,a,b)
+
         @fact test.parents[1] --> a
         @fact test.parents[2] --> b
         @fact test --> expected
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
+        @fact test --> test_2
     end
     context("one parent") do
         a = collect(1:9)
         test = VirtualArray{Int64, 1}(a)
+        test_2 = VirtualArray{Int64, 1}(1, a)
+
         @fact test.parents[1] --> a
         @fact length(test.parents) --> 1
         @fact length(test) --> length(a)
         @fact size(test) --> size(a)
+        @fact test --> test_2
     end
     context("multiple parent") do
         # set up
@@ -47,25 +56,31 @@ facts("Creating a VirtualArray") do
 
         expected = cat(1, parents...)
         test = VirtualArray{Int64, 1}(parents...)
+        test_2 = VirtualArray{Int64, 1}(1, parents...)
 
         @fact test.parents --> parents
         @fact length(test.parents) --> num_parents
         @fact test --> expected
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
+        @fact test --> test_2
     end
     context("2 dimensional parents") do
         # set up
-        num = rand(1:1000)
-        len = rand(1:100)
+        len = rand(2:4)
 
         a = rand(len,len)
         b = rand(len,len)
 
-        @pending test = VirtualArray{Int64, 1}(a, b)
-        @pending test.parents[1] --> a
-        @pending test.parents[1] --> b
-        @pending length(test.parents) --> 2
+        expected = cat(1, a, b)
+        test = VirtualArray{Float64, 2}(a, b)
+
+        @fact test.parents[1] --> a
+        @fact test.parents[2] --> b
+        @fact length(test.parents) --> 2
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
+        @fact test --> expected
     end
 end
 
