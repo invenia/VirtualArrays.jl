@@ -4,9 +4,9 @@ export VirtualArray, getindex, setindex!, size, length, eachindex
 
 import Base.size, Base.getindex, Base.length, Base.setindex!, Base.eachindex
 
-type VirtualArray{T,N} <: AbstractArray{Array{T,N},1}
+type VirtualArray{T,N} <: AbstractArray{T,N}
     expanded_dim::Int # This is the dimension we expand along
-    parents::Array{Array{T,N},1}
+    parents::Array{AbstractArray{T,N},1}
 
     function VirtualArray(expanded_dim::Int, parents::AbstractArray{T,N}...)
         return new(expanded_dim, Array[parent for parent in parents])
