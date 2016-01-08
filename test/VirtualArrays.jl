@@ -647,6 +647,147 @@ facts("Modifying values in a VirtualArray with mulit d arrays") do
     end
 end
 
+facts("Modifying values in a VirtualArray with mulit d arrays and expand in different dimensions") do
+    context("normal case changing one VirtualArray element in the first parent") do
+
+        # set up
+        # keep these numbers small because we can run out of memory or get very slow tests
+        num_parents = rand(3:10) # no larger than 10
+        num_dims = rand(3:6) # no larger than 6
+        len = rand(1:5) # no larger than 5
+        expanded_dim = rand(3:num_dims)
+
+        dims = zeros(Int, num_dims) + len
+
+        num_picked = rand(1:1000)
+        index_picked = []
+        for i in 1:num_dims
+            push!(index_picked, rand(1:len))
+        end
+
+        a = rand(dims...)
+        b = rand(dims...)
+
+        expected = cat(expanded_dim, a, b)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, a,b)
+
+        test[index_picked...] = num_picked
+        expected[index_picked...] = num_picked
+
+        @fact test[index_picked...] --> num_picked
+        @fact a[index_picked...] --> num_picked
+        @fact test --> expected
+
+    end
+    context("normal case changing one parent element in the first parent") do
+
+        # set up
+        # keep these numbers small because we can run out of memory or get very slow tests
+        num_parents = rand(3:10) # no larger than 10
+        num_dims = rand(3:6) # no larger than 6
+        len = rand(1:5) # no larger than 5
+        expanded_dim = rand(3:num_dims)
+
+        dims = zeros(Int, num_dims) + len
+
+        num_picked = rand(1:1000)
+        index_picked = []
+        for i in 1:num_dims
+            push!(index_picked, rand(1:len))
+        end
+
+        a = rand(dims...)
+        b = rand(dims...)
+
+        expected = cat(expanded_dim, a, b)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, a,b)
+
+        a[index_picked...] = num_picked
+        expected = cat(expanded_dim, a, b)
+
+        @fact test[index_picked...] --> num_picked
+        @fact a[index_picked...] --> num_picked
+        @fact test --> expected
+
+    end
+    context("normal case changing one VirtualArray element in the any parent") do
+
+        # set up
+        # keep these numbers small because we can run out of memory or get very slow tests
+        num_parents = rand(3:10) # no larger than 10
+        num_dims = rand(3:6) # no larger than 6
+        len = rand(1:5) # no larger than 5
+        expanded_dim = rand(3:num_dims)
+
+        dims = zeros(Int, num_dims) + len
+
+        parents = []
+        for i in 1:num_parents
+            push!(parents, rand(dims...))
+        end
+        change_i = []
+        for i in 1:num_dims
+            push!(change_i, rand(1:len))
+        end
+        change_p = rand(3:num_parents)
+        change_to = rand(1:10)
+        combined_i = [
+                change_i[1:expanded_dim-1]...,
+                (change_p-1)*len+change_i[expanded_dim],
+                change_i[expanded_dim+1:end]...
+            ]
+
+        expected = cat(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
+
+        test[combined_i...] = change_to
+        expected[combined_i...] = change_to
+
+        @fact test[combined_i...] --> change_to
+        @fact test.parents[change_p][change_i...] --> change_to
+        @fact test --> expected
+
+    end
+    context("normal case changing one element in the any parent") do
+
+        # set up
+        # keep these numbers small because we can run out of memory or get very slow tests
+        num_parents = rand(3:10) # no larger than 10
+        num_dims = rand(3:6) # no larger than 6
+        len = rand(1:5) # no larger than 5
+        expanded_dim = rand(3:num_dims)
+
+        dims = zeros(Int, num_dims) + len
+
+        parents = []
+        for i in 1:num_parents
+            push!(parents, rand(dims...))
+        end
+        change_i = []
+        for i in 1:num_dims
+            push!(change_i, rand(1:len))
+        end
+        change_p = rand(3:num_parents)
+        change_to = rand(1:10)
+        combined_i = [
+                change_i[1:expanded_dim-1]...,
+                (change_p-1)*len+change_i[expanded_dim],
+                change_i[expanded_dim+1:end]...
+            ]
+
+        expected = cat(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
+
+        parents[change_p][change_i...] = change_to
+        expected = cat(expanded_dim, parents...)
+
+        @fact test.parents[change_p][change_i...] --> change_to
+        @fact test[combined_i...] --> change_to
+        @fact test --> expected
+
+    end
+end
+
 facts("Errors while using VirtualArray") do
     context("out of bounds indexing on 1 1d array") do
         len = rand(1:100)
