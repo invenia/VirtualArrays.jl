@@ -191,6 +191,134 @@ facts("Creating a VirtualArray") do
     end
 end
 
+facts("Creating VirtualArrays and expanding on different dimensions") do
+    context("1 2 dimensional parent") do
+        # set up
+        len = rand(2:4)
+        expanded_dim = 2
+
+        a = rand(len,len)
+
+        expected = cat(expanded_dim, a)
+        test = VirtualArray{Float64, 2}(expanded_dim, a)
+
+        @fact test.parents[1] --> a
+        @fact length(test.parents) --> 1
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
+        @fact test --> expected
+        @fact eachindex(test) --> eachindex(expected)
+    end
+    context("2 dimensional parents") do
+        # set up
+        len = rand(2:4)
+        expanded_dim = 2
+
+        a = rand(len,len)
+        b = rand(len,len)
+
+        expected = cat(expanded_dim, a, b)
+        test = VirtualArray{Float64, 2}(expanded_dim, a, b)
+
+        @fact test.parents[1] --> a
+        @fact test.parents[2] --> b
+        @fact length(test.parents) --> 2
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
+        @fact test --> expected
+        @fact eachindex(test) --> eachindex(expected)
+    end
+    context("multiple 2 dimensional parents") do
+        # set up
+        num_parents = rand(3:10)
+        len = rand(1:100)
+        expanded_dim = 2
+
+        parents = []
+        for i in 1:num_parents
+            push!(parents, rand(len,len))
+        end
+
+        expected = cat(expanded_dim, parents...)
+        test = VirtualArray{Float64, 2}(expanded_dim, parents...)
+
+        @fact length(test.parents) --> num_parents
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
+        @fact test --> expected
+        @fact eachindex(test) --> eachindex(expected)
+    end
+    context("1 multi dimensional parents") do
+        # set up
+        # keep these numbers small because we can run out of memory or get very slow tests
+        num_dims = rand(3:6) # no larger than 6
+        len = rand(1:5) # no larger than 5
+        expanded_dim = rand(3:num_dims)
+
+        dims = zeros(Int, num_dims) + len
+
+        a = rand(dims...)
+
+        expected = cat(expanded_dim, a)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, a)
+
+        @fact test.parents[1] --> a
+        @fact length(test.parents) --> 1
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
+        @fact test --> expected
+        @fact eachindex(test) --> eachindex(expected)
+    end
+    context("2 multi dimensional parents") do
+        # set up
+        # keep these numbers small because we can run out of memory or get very slow tests
+        num_dims = rand(3:6) # no larger than 6
+        len = rand(1:5) # no larger than 5
+        expanded_dim = rand(3:num_dims)
+
+        dims = zeros(Int, num_dims) + len
+
+        a = rand(dims...)
+        b = rand(dims...)
+
+        expected = cat(expanded_dim, a, b)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, a, b)
+
+        @fact test.parents[1] --> a
+        @fact test.parents[2] --> b
+        @fact length(test.parents) --> 2
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
+        @fact test --> expected
+        @fact eachindex(test) --> eachindex(expected)
+    end
+    context("multi multi dimensional parents") do
+        # set up
+        # keep these numbers small because we can run out of memory or get very slow tests
+        num_parents = rand(3:10) # no larger than 10
+        num_dims = rand(3:6) # no larger than 6
+        len = rand(1:5) # no larger than 5
+        expanded_dim = rand(3:num_dims)
+
+        dims = zeros(Int, num_dims) + len
+
+        parents = []
+        for i in 1:num_parents
+            push!(parents, rand(dims...))
+        end
+
+        expected = cat(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
+
+        @fact test.parents --> parents
+        @fact length(test.parents) --> num_parents
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
+        @fact test --> expected
+        @fact eachindex(test) --> eachindex(expected)
+    end
+end
+
 facts("Modifying values in a VirtualArray with 1 d arrays") do
     context("normal case changing one VirtualArray element in the first parent") do
 
