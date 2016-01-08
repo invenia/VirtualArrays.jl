@@ -51,13 +51,12 @@ function getindex{T,N}(v::VirtualArray{T,N}, i::Int...)
 end
 
 function setindex!{T,N}(v::VirtualArray{T,N}, n, i::Int...)
-    index = i[1]
+    i = collect(i)
     for parent in v.parents
-        if index <= length(parent)
-            parent[index] = n
-            return
+        if i[v.expanded_dim] <= size(parent)[v.expanded_dim]
+            return parent[i...] = n
         end
-        index -= length(parent)
+        i[v.expanded_dim] -= size(parent)[v.expanded_dim]
     end
     throw(BoundsError(v, i))
 end
