@@ -83,7 +83,7 @@ facts("Creating a VirtualArray") do
         @fact length(test.parents) --> 1
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
-        @pending test --> expected
+        @fact test --> expected
         @fact eachindex(test) --> eachindex(expected)
     end
     context("2 dimensional parents") do
@@ -101,7 +101,7 @@ facts("Creating a VirtualArray") do
         @fact length(test.parents) --> 2
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
-        @pending test --> expected
+        @fact test --> expected
         @fact eachindex(test) --> eachindex(expected)
     end
     context("multiple 2 dimensional parents") do
@@ -120,7 +120,7 @@ facts("Creating a VirtualArray") do
         @fact length(test.parents) --> num_parents
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
-        @pending test --> expected
+        @fact test --> expected
         @fact eachindex(test) --> eachindex(expected)
     end
     context("1 multi dimensional parents") do
@@ -140,7 +140,7 @@ facts("Creating a VirtualArray") do
         @fact length(test.parents) --> 1
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
-        @pending test --> expected
+        @fact test --> expected
         @fact eachindex(test) --> eachindex(expected)
     end
     context("2 multi dimensional parents") do
@@ -162,7 +162,7 @@ facts("Creating a VirtualArray") do
         @fact length(test.parents) --> 2
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
-        @pending test --> expected
+        @fact test --> expected
         @fact eachindex(test) --> eachindex(expected)
     end
     context("multi multi dimensional parents") do
@@ -186,7 +186,7 @@ facts("Creating a VirtualArray") do
         @fact length(test.parents) --> num_parents
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
-        @pending test --> expected
+        @fact test --> expected
         @fact eachindex(test) --> eachindex(expected)
     end
 end

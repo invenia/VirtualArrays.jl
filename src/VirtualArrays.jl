@@ -40,12 +40,12 @@ function length(v::VirtualArray)
 end
 
 function getindex{T,N}(v::VirtualArray{T,N}, i::Int...)
-    index = i[1]
+    i = collect(i)
     for parent in v.parents
-        if index <= length(parent)
-            return parent[index]
+        if i[v.expanded_dim] <= size(parent)[v.expanded_dim]
+            return parent[i...]
         end
-        index -= length(parent)
+        i[v.expanded_dim] -= size(parent)[v.expanded_dim]
     end
     throw(BoundsError(v, i))
 end
