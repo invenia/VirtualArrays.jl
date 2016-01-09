@@ -1,3 +1,9 @@
+
+#### CREATING
+
+
+
+
 facts("Creating a VirtualArray") do
     context("no parameters or parametric constructors") do
         @pending test = VirtualArray()
@@ -127,7 +133,7 @@ facts("Creating a VirtualArray") do
         # set up
         # keep these numbers small because we can run out of memory or get very slow tests
         num_dims = rand(3:6) # no larger than 6
-        len = rand(1:5) # no larger than 5
+        len = rand(2:5) # no larger than 5
 
         dims = zeros(Int, num_dims) + len
 
@@ -147,7 +153,7 @@ facts("Creating a VirtualArray") do
         # set up
         # keep these numbers small because we can run out of memory or get very slow tests
         num_dims = rand(3:6) # no larger than 6
-        len = rand(1:5) # no larger than 5
+        len = rand(2:5) # no larger than 5
 
         dims = zeros(Int, num_dims) + len
 
@@ -170,7 +176,7 @@ facts("Creating a VirtualArray") do
         # keep these numbers small because we can run out of memory or get very slow tests
         num_parents = rand(3:10) # no larger than 10
         num_dims = rand(3:6) # no larger than 6
-        len = rand(1:5) # no larger than 5
+        len = rand(2:5) # no larger than 5
 
         dims = zeros(Int, num_dims) + len
 
@@ -252,7 +258,7 @@ facts("Creating VirtualArrays and expanding on different dimensions") do
         # set up
         # keep these numbers small because we can run out of memory or get very slow tests
         num_dims = rand(3:6) # no larger than 6
-        len = rand(1:5) # no larger than 5
+        len = rand(2:5) # no larger than 5
         expanded_dim = rand(3:num_dims)
 
         dims = zeros(Int, num_dims) + len
@@ -273,7 +279,7 @@ facts("Creating VirtualArrays and expanding on different dimensions") do
         # set up
         # keep these numbers small because we can run out of memory or get very slow tests
         num_dims = rand(3:6) # no larger than 6
-        len = rand(1:5) # no larger than 5
+        len = rand(2:5) # no larger than 5
         expanded_dim = rand(3:num_dims)
 
         dims = zeros(Int, num_dims) + len
@@ -297,7 +303,7 @@ facts("Creating VirtualArrays and expanding on different dimensions") do
         # keep these numbers small because we can run out of memory or get very slow tests
         num_parents = rand(3:10) # no larger than 10
         num_dims = rand(3:6) # no larger than 6
-        len = rand(1:5) # no larger than 5
+        len = rand(2:5) # no larger than 5
         expanded_dim = rand(3:num_dims)
 
         dims = zeros(Int, num_dims) + len
@@ -318,6 +324,14 @@ facts("Creating VirtualArrays and expanding on different dimensions") do
         @fact eachindex(test) --> eachindex(expected)
     end
 end
+
+
+
+
+#### MODIFYING
+
+
+
 
 facts("Modifying values in a VirtualArray with 1 d arrays") do
     context("normal case changing one VirtualArray element in the first parent") do
@@ -438,6 +452,7 @@ facts("Modifying values in a VirtualArray with 2 d arrays") do
         expected[index_picked...] = num_picked
 
         @fact test[index_picked...] --> num_picked
+        @fact test[index_picked...] --> num_picked
         @fact a[index_picked...] --> num_picked
         @fact test --> expected
 
@@ -525,7 +540,7 @@ facts("Modifying values in a VirtualArray with mulit d arrays") do
         # keep these numbers small because we can run out of memory or get very slow tests
         num_parents = rand(3:10) # no larger than 10
         num_dims = rand(3:6) # no larger than 6
-        len = rand(1:5) # no larger than 5
+        len = rand(2:5) # no larger than 5
 
         dims = zeros(Int, num_dims) + len
 
@@ -555,7 +570,7 @@ facts("Modifying values in a VirtualArray with mulit d arrays") do
         # keep these numbers small because we can run out of memory or get very slow tests
         num_parents = rand(3:10) # no larger than 10
         num_dims = rand(3:6) # no larger than 6
-        len = rand(1:5) # no larger than 5
+        len = rand(2:5) # no larger than 5
 
         dims = zeros(Int, num_dims) + len
 
@@ -585,7 +600,7 @@ facts("Modifying values in a VirtualArray with mulit d arrays") do
         # keep these numbers small because we can run out of memory or get very slow tests
         num_parents = rand(3:10) # no larger than 10
         num_dims = rand(3:6) # no larger than 6
-        len = rand(1:5) # no larger than 5
+        len = rand(2:5) # no larger than 5
 
         dims = zeros(Int, num_dims) + len
 
@@ -618,7 +633,7 @@ facts("Modifying values in a VirtualArray with mulit d arrays") do
         # keep these numbers small because we can run out of memory or get very slow tests
         num_parents = rand(3:10) # no larger than 10
         num_dims = rand(3:6) # no larger than 6
-        len = rand(1:5) # no larger than 5
+        len = rand(2:5) # no larger than 5
 
         dims = zeros(Int, num_dims) + len
 
@@ -654,7 +669,7 @@ facts("Modifying values in a VirtualArray with mulit d arrays and expand in diff
         # keep these numbers small because we can run out of memory or get very slow tests
         num_parents = rand(3:10) # no larger than 10
         num_dims = rand(3:6) # no larger than 6
-        len = rand(1:5) # no larger than 5
+        len = rand(2:5) # no larger than 5
         expanded_dim = rand(3:num_dims)
 
         dims = zeros(Int, num_dims) + len
@@ -685,7 +700,7 @@ facts("Modifying values in a VirtualArray with mulit d arrays and expand in diff
         # keep these numbers small because we can run out of memory or get very slow tests
         num_parents = rand(3:10) # no larger than 10
         num_dims = rand(3:6) # no larger than 6
-        len = rand(1:5) # no larger than 5
+        len = rand(2:5) # no larger than 5
         expanded_dim = rand(3:num_dims)
 
         dims = zeros(Int, num_dims) + len
@@ -716,7 +731,7 @@ facts("Modifying values in a VirtualArray with mulit d arrays and expand in diff
         # keep these numbers small because we can run out of memory or get very slow tests
         num_parents = rand(3:10) # no larger than 10
         num_dims = rand(3:6) # no larger than 6
-        len = rand(1:5) # no larger than 5
+        len = rand(2:5) # no larger than 5
         expanded_dim = rand(3:num_dims)
 
         dims = zeros(Int, num_dims) + len
@@ -754,7 +769,7 @@ facts("Modifying values in a VirtualArray with mulit d arrays and expand in diff
         # keep these numbers small because we can run out of memory or get very slow tests
         num_parents = rand(3:10) # no larger than 10
         num_dims = rand(3:6) # no larger than 6
-        len = rand(1:5) # no larger than 5
+        len = rand(2:5) # no larger than 5
         expanded_dim = rand(3:num_dims)
 
         dims = zeros(Int, num_dims) + len
@@ -788,12 +803,157 @@ facts("Modifying values in a VirtualArray with mulit d arrays and expand in diff
     end
 end
 
+facts("Accessing VirtualArray values oddly") do
+    context("accessing the element with a bunch of 1's padded on") do
+
+        # set up
+        len = rand(1:100)
+        num_picked = rand(1:1000)
+        index_picked = [rand(1:len),rand(1:len)]
+        oness = ones(Int, rand(1:100))
+
+        a = rand(len,len)
+        b = rand(len,len)
+
+        expected = cat(1, a, b)
+        test = VirtualArray{Float64, 2}(a,b)
+
+        test[index_picked...] = num_picked
+        expected[index_picked...] = num_picked
+
+        @fact test[index_picked...] --> num_picked
+        @fact test[index_picked..., oness...] --> num_picked
+        @fact a[index_picked...] --> num_picked
+        @fact a[index_picked..., oness...] --> num_picked
+        @fact test --> expected
+
+    end
+    context("setting the element with a bunch of 1's padded on") do
+
+        # set up
+        len = rand(1:100)
+        num_picked = rand(1:1000)
+        index_picked = [rand(1:len),rand(1:len)]
+        oness = ones(Int, rand(1:100))
+
+        a = rand(len,len)
+        b = rand(len,len)
+
+        expected = cat(1, a, b)
+        test = VirtualArray{Float64, 2}(a,b)
+
+        test[index_picked..., oness...] = num_picked
+        expected[index_picked..., oness...] = num_picked
+
+        @fact test[index_picked...] --> num_picked
+        @fact test[index_picked..., oness...] --> num_picked
+        @fact a[index_picked...] --> num_picked
+        @fact a[index_picked..., oness...] --> num_picked
+        @fact test --> expected
+
+    end
+    context("accessing a multi d VirtualArray like a 1 d array when expanded on dimension 1") do
+
+        # set up
+        # keep these numbers small because we can run out of memory or get very slow tests
+        num_parents = rand(3:10) # no larger than 10
+        num_dims = rand(3:6) # no larger than 6
+        len = rand(2:5) # no larger than 5
+        expanded_dim = 1
+
+        dims = zeros(Int, num_dims) + len
+
+        parents = []
+        for i in 1:num_parents
+            push!(parents, rand(dims...))
+        end
+
+        expected = cat(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
+
+        change_to = rand(1:10)
+        change_i = rand(1:length(expected))
+
+        test[change_i] = change_to
+        expected[change_i] = change_to
+
+        @fact test --> expected
+
+    end
+    context("accessing a multi d VirtualArray like a 1 d array when expanded on dimension 2") do
+
+        # set up
+        # keep these numbers small because we can run out of memory or get very slow tests
+        num_parents = rand(3:10) # no larger than 10
+        num_dims = rand(3:6) # no larger than 6
+        len = rand(2:5) # no larger than 5
+        expanded_dim = 2
+
+        dims = zeros(Int, num_dims) + len
+
+        parents = []
+        for i in 1:num_parents
+            push!(parents, rand(dims...))
+        end
+
+        expected = cat(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
+
+        change_to = rand(1:10)
+        change_i = rand(1:length(expected))
+
+        test[change_i] = change_to
+        expected[change_i] = change_to
+
+        @pending test --> expected
+
+    end
+    context("accessing a multi d VirtualArray like a 1 d array when expanded on dimension above 2") do
+
+        # set up
+        # keep these numbers small because we can run out of memory or get very slow tests
+        num_parents = rand(3:10) # no larger than 10
+        num_dims = rand(3:6) # no larger than 6
+        len = rand(2:5) # no larger than 5
+        expanded_dim = rand(3:num_dims)
+
+        dims = zeros(Int, num_dims) + len
+
+        parents = []
+        for i in 1:num_parents
+            push!(parents, rand(dims...))
+        end
+
+        expected = cat(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
+
+        change_to = rand(1:10)
+        change_i = rand(1:length(expected))
+
+        test[change_i] = change_to
+        expected[change_i] = change_to
+
+        @pending test --> expected
+
+    end
+end
+
+
+
+
+#### ERRORS
+
+
+
+
+
 facts("Errors while using VirtualArray") do
     context("out of bounds indexing on 1 1d array") do
         len = rand(1:100)
         a = rand(len)
         test = VirtualArray{Float64, 1}(a)
         @fact_throws BoundsError test[-1]
+        @fact_throws BoundsError test[0]
         @fact_throws BoundsError test[len+1]
     end
     context("out of bounds indexing on multiple 1d arrays") do
@@ -853,5 +1013,34 @@ facts("Errors while using VirtualArray") do
         a = rand(len)
         @fact_throws MethodError test = VirtualArray{Int64, 1}(a)
     end
-end
+    context("throw the right type of error when accessing the array wrong") do
 
+        # set up
+        a = rand(3,3,3)
+        b = rand(3,3,3)
+
+        c = cat(1,a,b)
+        test = VirtualArray{Float64, 3}(1, a, b)
+
+        @fact_throws BoundsError c[6,4,1]
+        @fact_throws BoundsError test[6,4,1]
+
+        c_error = 1
+        try
+            c[6,4,1]
+        catch e
+            c_error = e
+        end
+
+        test_error = 1
+        try
+            test[6,4,1]
+        catch e
+            test_error = e
+        end
+
+        @pending test_error.a --> c_error.a
+        @pending test_error.i --> c_error.i
+
+    end
+end

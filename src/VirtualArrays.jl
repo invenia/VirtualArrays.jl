@@ -40,7 +40,8 @@ function length(v::VirtualArray)
 end
 
 function getindex{T,N}(v::VirtualArray{T,N}, i::Int...)
-    i = collect(i)
+    i = get_correct_index_value(v, i...)
+
     for parent in v.parents
         if i[v.expanded_dim] <= size(parent)[v.expanded_dim]
             return parent[i...]
@@ -51,7 +52,8 @@ function getindex{T,N}(v::VirtualArray{T,N}, i::Int...)
 end
 
 function setindex!{T,N}(v::VirtualArray{T,N}, n, i::Int...)
-    i = collect(i)
+    i = get_correct_index_value(v, i...)
+
     for parent in v.parents
         if i[v.expanded_dim] <= size(parent)[v.expanded_dim]
             return parent[i...] = n
@@ -59,6 +61,38 @@ function setindex!{T,N}(v::VirtualArray{T,N}, n, i::Int...)
         i[v.expanded_dim] -= size(parent)[v.expanded_dim]
     end
     throw(BoundsError(v, i))
+end
+
+## TODO: Give these three functions much better names
+function get_correct_index_value(v::VirtualArray, i::Int...)
+    result = collect(i)
+    len_needed = length(size(v))
+    len_have = length(i)
+
+    divide_by = 1
+    for at in len_have:len_needed - 1
+        last_value = result[end]
+        result[end] = zero_to_end(last_value % size(v)[at], size(v)[at])
+        push!(result, divide(last_value, size(v)[at]))
+    end
+
+    return result
+end
+
+function zero_to_end(value::Int, size::Int)
+    if value == 0
+        return size
+    else
+        return value
+    end
+end
+
+function divide(value::Int, size::Int)
+    if value % size == 0
+        return div(value, size)
+    else
+        return div(value, size) + 1
+    end
 end
 
 end # module
