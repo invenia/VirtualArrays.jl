@@ -905,7 +905,7 @@ facts("Accessing VirtualArray values oddly") do
         test[change_i] = change_to
         expected[change_i] = change_to
 
-        @pending test --> expected
+        @fact test --> expected
 
     end
     context("accessing a multi d VirtualArray like a 1 d array when expanded on dimension above 2") do
@@ -933,7 +933,7 @@ facts("Accessing VirtualArray values oddly") do
         test[change_i] = change_to
         expected[change_i] = change_to
 
-        @pending test --> expected
+        @fact test --> expected
 
     end
 end
