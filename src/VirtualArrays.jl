@@ -21,12 +21,18 @@ eachindex(v::VirtualArray) = 1:length(v)
 function size(v::VirtualArray)
     result = [0]
     if !isempty(v.parents)
-        expanded_size = 0
-        for parent in v.parents
-            expanded_size += size(parent)[v.expanded_dim]
-        end
         result = collect(size(v.parents[1]))
-        result[v.expanded_dim] = expanded_size
+        if length(result) >= v.expanded_dim
+            expanded_size = 0
+            for parent in v.parents
+                expanded_size += size(parent)[v.expanded_dim]
+            end
+            result[v.expanded_dim] = expanded_size
+        else
+            expanded_size = length(v.parents)
+            push!(result, ones(Int, v.expanded_dim - length(result))  ...)
+            result[v.expanded_dim] = expanded_size
+        end
     end
     return tuple(result...)
 end
@@ -44,10 +50,10 @@ function getindex{T,N}(v::VirtualArray{T,N}, i::Int...)
     i = get_correct_index_value(v, i...)
 
     for parent in v.parents
-        if i[v.expanded_dim] <= size(parent)[v.expanded_dim]
+        if i[v.expanded_dim] <= get_dimension_size(parent, v.expanded_dim)
             return parent[i...]
         end
-        i[v.expanded_dim] -= size(parent)[v.expanded_dim]
+        i[v.expanded_dim] -= get_dimension_size(parent, v.expanded_dim)
     end
 end
 
@@ -56,10 +62,10 @@ function setindex!{T,N}(v::VirtualArray{T,N}, n, i::Int...)
     i = get_correct_index_value(v, i...)
 
     for parent in v.parents
-        if i[v.expanded_dim] <= size(parent)[v.expanded_dim]
+        if i[v.expanded_dim] <= get_dimension_size(parent, v.expanded_dim)
             return parent[i...] = n
         end
-        i[v.expanded_dim] -= size(parent)[v.expanded_dim]
+        i[v.expanded_dim] -= get_dimension_size(parent, v.expanded_dim)
     end
 end
 
@@ -92,6 +98,14 @@ function divide(value::Int, size::Int)
         return div(value, size)
     else
         return div(value, size) + 1
+    end
+end
+
+function get_dimension_size(v::AbstractArray, i::Int)
+    if length(size(v)) >= i
+        return size(v)[i]
+    else
+        return 1
     end
 end
 

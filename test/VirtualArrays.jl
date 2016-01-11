@@ -365,6 +365,106 @@ facts("Creating VirtualArrays and expanding on different dimensions") do
         @fact test --> expected
         @fact eachindex(test) --> eachindex(expected)
     end
+
+    context("creating an 1 d VirtualArray with 1 d parents of different lengths") do
+        # set up
+        num_dims = 1
+        len = rand(2:2:20) # no larger than 5
+        len_2 = rand(3:2:30) # no larger than 5
+        expanded_dim = 1
+
+        a = rand(len)
+        b = rand(len_2)
+        parents = Array[a, b]
+
+        expected = cat(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+
+        @fact test.parents --> parents
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
+        @fact test --> expected
+        @fact eachindex(test) --> eachindex(expected)
+    end
+    context("creating an 2 d VirtualArray with 2 d parents of different lengths") do
+        # set up
+        num_dims = 2
+        len = rand(2:2:20) # no larger than 5
+        len_2 = rand(3:2:21) # no larger than 5
+        expanded_dim = 2
+
+        a = rand(len, len)
+        b = rand(len, len_2)
+        parents = Array[a, b]
+
+        expected = cat(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+
+        @fact test.parents --> parents
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
+        @fact test --> expected
+        @fact eachindex(test) --> eachindex(expected)
+    end
+    context("creating an 2 d VirtualArray with 2 d parents of different heights") do
+        # set up
+        num_dims = 2
+        len = rand(2:2:20) # no larger than 5
+        len_2 = rand(3:2:21) # no larger than 5
+        expanded_dim = 1
+
+        a = rand(len, len)
+        b = rand(len_2, len)
+        parents = Array[a, b]
+
+        expected = cat(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+
+        @fact test.parents --> parents
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
+        @fact test --> expected
+        @fact eachindex(test) --> eachindex(expected)
+    end
+
+    context("creating an 2 d VirtualArray with 1 d parents") do
+        # set up
+        num_dims = 2
+        len = rand(2:10) # no larger than 5
+        expanded_dim = 2
+
+        a = rand(len)
+        b = rand(len)
+        parents = Array[a, b]
+
+        expected = cat(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+
+        @fact test.parents --> parents
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
+        @fact test --> expected
+        @fact eachindex(test) --> eachindex(expected)
+    end
+    context("creating an 3> d VirtualArray with 1 d parents") do
+        # set up
+        num_dims = rand(3:10)
+        len = rand(2:10) # no larger than 5
+        expanded_dim = num_dims
+
+        a = rand(len)
+        b = rand(len)
+        parents = Array[a, b]
+
+        expected = cat(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+
+        @fact test.parents --> parents
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
+        @fact test --> expected
+        @fact eachindex(test) --> eachindex(expected)
+    end
 end
 
 
@@ -982,6 +1082,196 @@ end
 
 
 
+facts("Modifying values in a 1 d VirtualArray with 1 d arrays of different lengths") do
+    context("modifying a value in the first parent from VirtualArray") do
+        # set up
+        num_dims = 1
+        len = rand(2:2:20) # no larger than 5
+        len_2 = rand(3:2:30) # no larger than 5
+        expanded_dim = 1
+        num_picked = rand(1:1000)
+        index_picked = rand(1:len)
+
+        a = rand(len)
+        b = rand(len_2)
+        parents = Array[a, b]
+
+        expected = cat(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+
+        test[index_picked] = num_picked
+        expected[index_picked] = num_picked
+
+        @fact test[index_picked] --> num_picked
+        @fact a[index_picked] --> num_picked
+        @fact test --> expected
+    end
+    context("modifying a value in the second parent from VirtualArray") do
+        # set up
+        num_dims = 1
+        len = rand(2:2:20) # no larger than 5
+        len_2 = rand(3:2:30) # no larger than 5
+        expanded_dim = 1
+        num_picked = rand(1:1000)
+        index_picked = rand(1:len_2)
+
+        a = rand(len)
+        b = rand(len_2)
+        parents = Array[a, b]
+
+        expected = cat(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+
+        test[index_picked + len] = num_picked
+        expected[index_picked + len] = num_picked
+
+        @fact test[index_picked + len] --> num_picked
+        @fact b[index_picked] --> num_picked
+        @fact test --> expected
+    end
+    context("modifying a value in the first parent from the parent") do
+        # set up
+        num_dims = 1
+        len = rand(2:2:20) # no larger than 5
+        len_2 = rand(3:2:30) # no larger than 5
+        expanded_dim = 1
+        num_picked = rand(1:1000)
+        index_picked = rand(1:len)
+
+        a = rand(len)
+        b = rand(len_2)
+        parents = Array[a, b]
+
+        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+
+        a[index_picked] = num_picked
+        expected = cat(expanded_dim, parents...)
+
+        @fact test[index_picked] --> num_picked
+        @fact a[index_picked] --> num_picked
+        @fact test --> expected
+    end
+    context("modifying a value in the second parent from the parent") do
+        # set up
+        num_dims = 1
+        len = rand(2:2:20) # no larger than 5
+        len_2 = rand(3:2:30) # no larger than 5
+        expanded_dim = 1
+        num_picked = rand(1:1000)
+        index_picked = rand(1:len_2)
+
+        a = rand(len)
+        b = rand(len_2)
+        parents = Array[a, b]
+
+        expected = cat(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+
+        b[index_picked] = num_picked
+        expected = cat(expanded_dim, parents...)
+
+        @fact test[index_picked + len] --> num_picked
+        @fact b[index_picked] --> num_picked
+        @fact test --> expected
+    end
+end
+
+
+facts("modifying values of m d VirtualArrays with n d parents") do
+    context("modifying the value in the first parent from VirtualArray") do
+        # set up
+        num_dims = 2
+        len = rand(2:10) # no larger than 5
+        expanded_dim = 2
+        num_picked = rand(1:1000)
+        index_picked = rand(1:len)
+
+        a = rand(len)
+        b = rand(len)
+        parents = Array[a, b]
+
+        expected = cat(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+
+        test[index_picked, 1] = num_picked
+        expected[index_picked, 1] = num_picked
+
+        @fact test[index_picked, 1] --> num_picked
+        @fact a[index_picked] --> num_picked
+        @fact test --> expected
+    end
+    context("modifying the value in the second parent from VirtualArray") do
+        # set up
+        num_dims = 2
+        len = rand(2:10) # no larger than 5
+        expanded_dim = 2
+        num_picked = rand(1:1000)
+        index_picked = rand(1:len)
+
+        a = rand(len)
+        b = rand(len)
+        parents = Array[a, b]
+
+        expected = cat(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+
+        test[index_picked, 2] = num_picked
+        expected[index_picked, 2] = num_picked
+
+        @fact test[index_picked, 2] --> num_picked
+        @fact b[index_picked] --> num_picked
+        @fact test --> expected
+    end
+    context("modifying the value in the first parent from the parent") do
+        # set up
+        num_dims = 2
+        len = rand(2:10) # no larger than 5
+        expanded_dim = 2
+        num_picked = rand(1:1000)
+        index_picked = rand(1:len)
+
+        a = rand(len)
+        b = rand(len)
+        parents = Array[a, b]
+
+        expected = cat(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+
+        a[index_picked] = num_picked
+        expected = cat(expanded_dim, parents...)
+
+        @fact test[index_picked, 1] --> num_picked
+        @fact a[index_picked] --> num_picked
+        @fact test --> expected
+    end
+    context("modifying the value in the second parent from the parent") do
+        # set up
+        num_dims = 2
+        len = rand(2:10) # no larger than 5
+        expanded_dim = 2
+        num_picked = rand(1:1000)
+        index_picked = rand(1:len)
+
+        a = rand(len)
+        b = rand(len)
+        parents = Array[a, b]
+
+        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+
+        b[index_picked] = num_picked
+        expected = cat(expanded_dim, parents...)
+
+        @fact test[index_picked, 2] --> num_picked
+        @fact b[index_picked] --> num_picked
+        @fact test --> expected
+    end
+end
+
+
+
+
+
+
 
 #### ERRORS
 
@@ -1082,5 +1372,83 @@ facts("Errors while using VirtualArray") do
         @fact test_error.a --> c_error.a
         @fact test_error.i --> c_error.i
 
+    end
+
+
+
+    context("trying to make an 2 d array of 1 d parents of different sizes") do
+        # set up
+        num_dims = 2
+        len = rand(2:2:20) # no larger than 5
+        len_2 = rand(3:2:30) # no larger than 5
+        expanded_dim = 2
+
+        a = rand(len)
+        b = rand(len_2)
+        parents = Array[a, b]
+
+        @fact_throws DimensionMismatch expected = cat(expanded_dim, parents...)
+        @fact_throws DimensionMismatch test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+
+        c_error = 1
+        try
+            expected = cat(expanded_dim, parents...)
+        catch e
+            c_error = e
+        end
+
+        test_error = 1
+        try
+            test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        catch e
+            test_error = e
+        end
+
+        @fact test_error.msg --> c_error.msg
+    end
+    context("trying to make a VirtualArray of dimensions x, but having the parents and expanded dimension be less than x") do
+        # set up
+        num_dims = rand(3:10)
+        len = rand(2:10) # no larger than 5
+        expanded_dim = rand(1:num_dims-1)
+
+        a = rand(len)
+        b = rand(len)
+        parents = Array[a, b]
+
+        @fact_throws DimensionMismatch expected = Array{Int,num_dims}(cat(expanded_dim, parents...))
+        @fact_throws MethodError test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+
+        c_error = 1
+        try
+            expected = Array{Int,num_dims}(cat(expanded_dim, parents...))
+        catch e
+            c_error = e
+        end
+
+        test_error = 1
+        try
+            test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        catch e
+            test_error = e
+        end
+
+        @fact test_error.args --> c_error.args
+        @fact test_error.f --> c_error.f
+        @fact test_error --> c_error
+    end
+    context("creating an 2 d VirtualArray with 2 d parents of different lengths on the wrong dimension") do
+        # set up
+        num_dims = 2
+        len = rand(2:2:20) # no larger than 5
+        len_2 = rand(3:2:21) # no larger than 5
+        expanded_dim = 1 # to work, this should be 2
+
+        a = rand(len, len)
+        b = rand(len, len_2)
+        parents = Array[a, b]
+
+        @fact_throws DimensionMismatch expected = cat(expanded_dim, parents...)
+        @fact_throws DimensionMismatch test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
     end
 end
