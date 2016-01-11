@@ -1039,8 +1039,8 @@ facts("Errors while using VirtualArray") do
             test_error = e
         end
 
-        @pending test_error.a --> c_error.a
-        @pending test_error.i --> c_error.i
+        @fact test_error.a --> c_error.a
+        @fact test_error.i --> c_error.i
 
     end
 end

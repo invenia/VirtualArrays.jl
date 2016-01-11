@@ -40,6 +40,7 @@ function length(v::VirtualArray)
 end
 
 function getindex{T,N}(v::VirtualArray{T,N}, i::Int...)
+    checkbounds(v, i...)
     i = get_correct_index_value(v, i...)
 
     for parent in v.parents
@@ -48,10 +49,10 @@ function getindex{T,N}(v::VirtualArray{T,N}, i::Int...)
         end
         i[v.expanded_dim] -= size(parent)[v.expanded_dim]
     end
-    throw(BoundsError(v, i))
 end
 
 function setindex!{T,N}(v::VirtualArray{T,N}, n, i::Int...)
+    checkbounds(v, i...)
     i = get_correct_index_value(v, i...)
 
     for parent in v.parents
@@ -60,7 +61,6 @@ function setindex!{T,N}(v::VirtualArray{T,N}, n, i::Int...)
         end
         i[v.expanded_dim] -= size(parent)[v.expanded_dim]
     end
-    throw(BoundsError(v, i))
 end
 
 ## TODO: Give these three functions much better names
