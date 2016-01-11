@@ -9,9 +9,11 @@ type VirtualArray{T,N,P<:AbstractArray} <: AbstractArray{T,N}
     parents::Array{P,1}
 
     function VirtualArray(expanded_dim::Int, parents::P...)
+        check_parents_dimensions(expanded_dim, parents...)
         return new(expanded_dim, Array[parent for parent in parents])
     end
     function VirtualArray(parents::P...)
+        check_parents_dimensions(1, parents...)
         return new(1, Array[parent for parent in parents])
     end
 end
@@ -106,6 +108,21 @@ function get_dimension_size(v::AbstractArray, i::Int)
         return size(v)[i]
     else
         return 1
+    end
+end
+
+function check_parents_dimensions(ignore_dim::Int, parents::AbstractArray...)
+    if !isempty(parents)
+        default_parent = parents[1]
+        default_size = size(parents[1])
+        for parent in parents
+            curr_size = size(parent)
+            for i in max(length(default_size), length(curr_size))
+                if i != ignore_dim && get_dimension_size(parent, i) != get_dimension_size(default_parent, i)
+                    throw(DimensionMismatch("mismatch in dimension $i"))
+                end
+            end
+        end
     end
 end
 
