@@ -3,11 +3,7 @@
 
 function virtual_cat{T}(expanded_dim::Int, parents::AbstractArray{T}...)
     dim = max(expanded_dim, largest_dim(parents...))
-
-    expr = quote
-        VirtualArray{$T, $dim}($expanded_dim, $(parents...))
-    end
-    return eval(expr)
+    return eval(:(VirtualArray{$T, $dim}($expanded_dim, $(parents...))))
 end
 
 function virtual_cat(expanded_dim::Int)
