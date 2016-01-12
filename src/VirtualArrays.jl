@@ -49,7 +49,7 @@ end
 
 function getindex(v::VirtualArray, i::Int...)
     checkbounds(v, i...)
-    i = get_correct_index_value(v, i...)
+    i = expand_index(v, i...)
 
     for parent in v.parents
         if i[v.expanded_dim] <= get_dimension_size(parent, v.expanded_dim)
@@ -61,7 +61,7 @@ end
 
 function setindex!(v::VirtualArray, n, i::Int...)
     checkbounds(v, i...)
-    i = get_correct_index_value(v, i...)
+    i = expand_index(v, i...)
 
     for parent in v.parents
         if i[v.expanded_dim] <= get_dimension_size(parent, v.expanded_dim)
@@ -71,8 +71,7 @@ function setindex!(v::VirtualArray, n, i::Int...)
     end
 end
 
-## TODO: Give these three functions much better names
-function get_correct_index_value(v::VirtualArray, i::Int...)
+function expand_index(v::VirtualArray, i::Int...)
     result = collect(i)
     len_needed = length(size(v))
     len_have = length(i)
@@ -80,26 +79,27 @@ function get_correct_index_value(v::VirtualArray, i::Int...)
     divide_by = 1
     for at in len_have:len_needed - 1
         last_value = result[end]
-        result[end] = zero_to_end(last_value % size(v)[at], size(v)[at])
+        result[end] = fix_zero_index(last_value, size(v)[at])
         push!(result, divide(last_value, size(v)[at]))
     end
 
     return result
 end
 
-function zero_to_end(value::Int, size::Int)
+function fix_zero_index(value::Int, s::Int)
+    value = value % s
     if value == 0
-        return size
+        return s
     else
         return value
     end
 end
 
-function divide(value::Int, size::Int)
-    if value % size == 0
-        return div(value, size)
+function divide(value::Int, s::Int)
+    if value % s == 0
+        return div(value, s)
     else
-        return div(value, size) + 1
+        return div(value, s) + 1
     end
 end
 
