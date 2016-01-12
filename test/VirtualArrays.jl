@@ -1,47 +1,8 @@
-
-#### CREATING
-
-
-
+############################################################################################
+# CREATING
+############################################################################################
 
 facts("Creating a VirtualArray") do
-    context("no parameters or parametric constructors") do
-        @pending test = VirtualArray()
-        @pending isempty(test.parents) --> true
-    end
-    context("no parameters but has parametric constructors") do
-        expected = []
-        test = VirtualArray{Any, 1, AbstractArray}()
-        test_2 = VirtualArray{Any, 1, AbstractArray}(1)
-
-        @fact isempty(test.parents) --> true
-        @fact length(test) --> length(expected)
-        @fact size(test) --> size(expected)
-        @fact test --> test_2
-        @fact eachindex(test) --> eachindex(expected)
-    end
-    context("no parameters but has parametric constructors of specific type") do
-        expected = []
-        test = VirtualArray{Any, 1, SubArray}()
-        test_2 = VirtualArray{Any, 1, SubArray}(1)
-
-        @fact isempty(test.parents) --> true
-        @fact length(test) --> length(expected)
-        @fact size(test) --> size(expected)
-        @fact test --> test_2
-        @fact eachindex(test) --> eachindex(expected)
-    end
-    context("no parameters but has parametric constructors of even more specific type") do
-        expected = []
-        test = VirtualArray{Any, 1, SubArray{Int, 27}}()
-        test_2 = VirtualArray{Any, 1, SubArray{Int, 27}}(1)
-
-        @fact isempty(test.parents) --> true
-        @fact length(test) --> length(expected)
-        @fact size(test) --> size(expected)
-        @fact test --> test_2
-        @fact eachindex(test) --> eachindex(expected)
-    end
     context("normal case") do
         # set up
         num = rand(1:1000)
@@ -51,28 +12,8 @@ facts("Creating a VirtualArray") do
         b = collect(num:num+len)
         expected = cat(1,a,b)
 
-        test = VirtualArray{Int64, 1, AbstractArray}(a,b)
-        test_2 = VirtualArray{Int64, 1, AbstractArray}(1,a,b)
-
-        @fact test.parents[1] --> a
-        @fact test.parents[2] --> b
-        @fact test --> expected
-        @fact length(test) --> length(expected)
-        @fact size(test) --> size(expected)
-        @fact test --> test_2
-        @fact eachindex(test) --> eachindex(expected)
-    end
-    context("normal case with specific parametric constructors") do
-        # set up
-        num = rand(1:1000)
-        len = rand(1:100)
-
-        a = collect(num:num+len)
-        b = collect(num:num+len)
-        expected = cat(1,a,b)
-
-        test = VirtualArray{Int64, 1, Array{Int, 1}}(a,b)
-        test_2 = VirtualArray{Int64, 1, Array{Int, 1}}(1,a,b)
+        test = VirtualArray{Int64, 1}(a,b)
+        test_2 = VirtualArray{Int64, 1}(1,a,b)
 
         @fact test.parents[1] --> a
         @fact test.parents[2] --> b
@@ -84,8 +25,8 @@ facts("Creating a VirtualArray") do
     end
     context("one parent") do
         a = collect(1:9)
-        test = VirtualArray{Int64, 1, AbstractArray}(a)
-        test_2 = VirtualArray{Int64, 1, AbstractArray}(1, a)
+        test = VirtualArray{Int64, 1}(a)
+        test_2 = VirtualArray{Int64, 1}(1, a)
         expected = cat(1,a)
 
         @fact test.parents[1] --> a
@@ -107,8 +48,8 @@ facts("Creating a VirtualArray") do
         end
 
         expected = cat(1, parents...)
-        test = VirtualArray{Int64, 1, AbstractArray}(parents...)
-        test_2 = VirtualArray{Int64, 1, AbstractArray}(1, parents...)
+        test = VirtualArray{Int64, 1}(parents...)
+        test_2 = VirtualArray{Int64, 1}(1, parents...)
 
         @fact test.parents --> parents
         @fact length(test.parents) --> num_parents
@@ -125,7 +66,7 @@ facts("Creating a VirtualArray") do
         a = rand(len,len)
 
         expected = cat(1, a)
-        test = VirtualArray{Float64, 2, AbstractArray}(a)
+        test = VirtualArray{Float64, 2}(a)
 
         @fact test.parents[1] --> a
         @fact length(test.parents) --> 1
@@ -142,7 +83,7 @@ facts("Creating a VirtualArray") do
         b = rand(len,len)
 
         expected = cat(1, a, b)
-        test = VirtualArray{Float64, 2, AbstractArray}(a, b)
+        test = VirtualArray{Float64, 2}(a, b)
 
         @fact test.parents[1] --> a
         @fact test.parents[2] --> b
@@ -163,7 +104,7 @@ facts("Creating a VirtualArray") do
         end
 
         expected = cat(1, parents...)
-        test = VirtualArray{Float64, 2, AbstractArray}(parents...)
+        test = VirtualArray{Float64, 2}(parents...)
 
         @fact length(test.parents) --> num_parents
         @fact length(test) --> length(expected)
@@ -182,7 +123,7 @@ facts("Creating a VirtualArray") do
         a = rand(dims...)
 
         expected = cat(1, a)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(a)
+        test = VirtualArray{Float64, num_dims}(a)
 
         @fact test.parents[1] --> a
         @fact length(test.parents) --> 1
@@ -203,7 +144,7 @@ facts("Creating a VirtualArray") do
         b = rand(dims...)
 
         expected = cat(1, a, b)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(a, b)
+        test = VirtualArray{Float64, num_dims}(a, b)
 
         @fact test.parents[1] --> a
         @fact test.parents[2] --> b
@@ -228,7 +169,7 @@ facts("Creating a VirtualArray") do
         end
 
         expected = cat(1, parents...)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(parents...)
+        test = VirtualArray{Float64, num_dims}(parents...)
 
         @fact test.parents --> parents
         @fact length(test.parents) --> num_parents
@@ -248,7 +189,7 @@ facts("Creating VirtualArrays and expanding on different dimensions") do
         a = rand(len,len)
 
         expected = cat(expanded_dim, a)
-        test = VirtualArray{Float64, 2, AbstractArray}(expanded_dim, a)
+        test = VirtualArray{Float64, 2}(expanded_dim, a)
 
         @fact test.parents[1] --> a
         @fact length(test.parents) --> 1
@@ -266,7 +207,7 @@ facts("Creating VirtualArrays and expanding on different dimensions") do
         b = rand(len,len)
 
         expected = cat(expanded_dim, a, b)
-        test = VirtualArray{Float64, 2, AbstractArray}(expanded_dim, a, b)
+        test = VirtualArray{Float64, 2}(expanded_dim, a, b)
 
         @fact test.parents[1] --> a
         @fact test.parents[2] --> b
@@ -288,7 +229,7 @@ facts("Creating VirtualArrays and expanding on different dimensions") do
         end
 
         expected = cat(expanded_dim, parents...)
-        test = VirtualArray{Float64, 2, AbstractArray}(expanded_dim, parents...)
+        test = VirtualArray{Float64, 2}(expanded_dim, parents...)
 
         @fact length(test.parents) --> num_parents
         @fact length(test) --> length(expected)
@@ -308,7 +249,7 @@ facts("Creating VirtualArrays and expanding on different dimensions") do
         a = rand(dims...)
 
         expected = cat(expanded_dim, a)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, a)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, a)
 
         @fact test.parents[1] --> a
         @fact length(test.parents) --> 1
@@ -330,7 +271,7 @@ facts("Creating VirtualArrays and expanding on different dimensions") do
         b = rand(dims...)
 
         expected = cat(expanded_dim, a, b)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, a, b)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, a, b)
 
         @fact test.parents[1] --> a
         @fact test.parents[2] --> b
@@ -356,7 +297,7 @@ facts("Creating VirtualArrays and expanding on different dimensions") do
         end
 
         expected = cat(expanded_dim, parents...)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
 
         @fact test.parents --> parents
         @fact length(test.parents) --> num_parents
@@ -378,7 +319,7 @@ facts("Creating VirtualArrays and expanding on different dimensions") do
         parents = Array[a, b]
 
         expected = cat(expanded_dim, parents...)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
 
         @fact test.parents --> parents
         @fact length(test) --> length(expected)
@@ -398,7 +339,7 @@ facts("Creating VirtualArrays and expanding on different dimensions") do
         parents = Array[a, b]
 
         expected = cat(expanded_dim, parents...)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
 
         @fact test.parents --> parents
         @fact length(test) --> length(expected)
@@ -418,7 +359,7 @@ facts("Creating VirtualArrays and expanding on different dimensions") do
         parents = Array[a, b]
 
         expected = cat(expanded_dim, parents...)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
 
         @fact test.parents --> parents
         @fact length(test) --> length(expected)
@@ -438,7 +379,7 @@ facts("Creating VirtualArrays and expanding on different dimensions") do
         parents = Array[a, b]
 
         expected = cat(expanded_dim, parents...)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
 
         @fact test.parents --> parents
         @fact length(test) --> length(expected)
@@ -457,7 +398,7 @@ facts("Creating VirtualArrays and expanding on different dimensions") do
         parents = Array[a, b]
 
         expected = cat(expanded_dim, parents...)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
 
         @fact test.parents --> parents
         @fact length(test) --> length(expected)
@@ -467,13 +408,30 @@ facts("Creating VirtualArrays and expanding on different dimensions") do
     end
 end
 
+facts("Creating VirtualArrays oddly") do
+    context("storing float array into a real VirtualArray") do
+        # set up
+        num_dims = 1
+        len = rand(2:10) # no larger than 5
+        expanded_dim = 1
 
+        a = rand(Float64, len)
+        b = rand(Float64, len)
+        parents = Array[a, b]
 
+        expected = cat(expanded_dim, parents...)
+        test = VirtualArray{Real, num_dims}(expanded_dim, parents...)
 
-#### MODIFYING
-
-
-
+        @fact test.parents --> parents
+        @fact length(test) --> length(expected)
+        @fact size(test) --> size(expected)
+        @fact test --> expected
+        @fact eachindex(test) --> eachindex(expected)
+    end
+end
+############################################################################################
+# MODIFYING
+############################################################################################
 
 facts("Modifying values in a VirtualArray with 1 d arrays") do
     context("normal case changing one VirtualArray element in the first parent") do
@@ -488,7 +446,7 @@ facts("Modifying values in a VirtualArray with 1 d arrays") do
         b = collect(num:num+len)
 
         expected = cat(1, a, b)
-        test = VirtualArray{Int64, 1, AbstractArray}(a,b)
+        test = VirtualArray{Int64, 1}(a,b)
 
         test[index_picked] = num_picked
         expected[index_picked] = num_picked
@@ -511,7 +469,7 @@ facts("Modifying values in a VirtualArray with 1 d arrays") do
         b = collect(num:num+len)
 
         expected = cat(1, a, b)
-        test = VirtualArray{Int64, 1, AbstractArray}(a,b)
+        test = VirtualArray{Int64, 1}(a,b)
 
         a[index_picked] = num_picked
         expected = cat(1, a, b)
@@ -538,7 +496,7 @@ facts("Modifying values in a VirtualArray with 1 d arrays") do
         end
 
         expected = cat(1, parents...)
-        test = VirtualArray{Int64, 1, AbstractArray}(parents...)
+        test = VirtualArray{Int64, 1}(parents...)
 
         test[(change_p-1)*len+change_i] = change_to
         expected[(change_p-1)*len+change_i] = change_to
@@ -564,7 +522,7 @@ facts("Modifying values in a VirtualArray with 1 d arrays") do
         end
 
         expected = cat(1, parents...)
-        test = VirtualArray{Int64, 1, AbstractArray}(parents...)
+        test = VirtualArray{Int64, 1}(parents...)
 
         parents[change_p][change_i] = change_to
         expected = cat(1, parents...)
@@ -588,7 +546,7 @@ facts("Modifying values in a VirtualArray with 2 d arrays") do
         b = rand(len,len)
 
         expected = cat(1, a, b)
-        test = VirtualArray{Float64, 2, AbstractArray}(a,b)
+        test = VirtualArray{Float64, 2}(a,b)
 
         test[index_picked...] = num_picked
         expected[index_picked...] = num_picked
@@ -610,7 +568,7 @@ facts("Modifying values in a VirtualArray with 2 d arrays") do
         b = rand(len,len)
 
         expected = cat(1, a, b)
-        test = VirtualArray{Float64, 2, AbstractArray}(a,b)
+        test = VirtualArray{Float64, 2}(a,b)
 
         a[index_picked...] = num_picked
         expected = cat(1, a, b)
@@ -636,7 +594,7 @@ facts("Modifying values in a VirtualArray with 2 d arrays") do
         end
 
         expected = cat(1, parents...)
-        test = VirtualArray{Float64, 2, AbstractArray}(parents...)
+        test = VirtualArray{Float64, 2}(parents...)
 
 
         test[combined_i...] = change_to
@@ -663,7 +621,7 @@ facts("Modifying values in a VirtualArray with 2 d arrays") do
         end
 
         expected = cat(1, parents...)
-        test = VirtualArray{Float64, 2, AbstractArray}(parents...)
+        test = VirtualArray{Float64, 2}(parents...)
 
         parents[change_p][change_i...] = change_to
         expected = cat(1, parents...)
@@ -696,7 +654,7 @@ facts("Modifying values in a VirtualArray with mulit d arrays") do
         b = rand(dims...)
 
         expected = cat(1, a, b)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(a,b)
+        test = VirtualArray{Float64, num_dims}(a,b)
 
         test[index_picked...] = num_picked
         expected[index_picked...] = num_picked
@@ -726,7 +684,7 @@ facts("Modifying values in a VirtualArray with mulit d arrays") do
         b = rand(dims...)
 
         expected = cat(1, a, b)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(a,b)
+        test = VirtualArray{Float64, num_dims}(a,b)
 
         a[index_picked...] = num_picked
         expected = cat(1, a, b)
@@ -759,7 +717,7 @@ facts("Modifying values in a VirtualArray with mulit d arrays") do
         combined_i = [(change_p-1)*len+change_i[1],change_i[2:end]...]
 
         expected = cat(1, parents...)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(parents...)
+        test = VirtualArray{Float64, num_dims}(parents...)
 
         test[combined_i...] = change_to
         expected[combined_i...] = change_to
@@ -792,7 +750,7 @@ facts("Modifying values in a VirtualArray with mulit d arrays") do
         combined_i = [(change_p-1)*len+change_i[1],change_i[2:end]...]
 
         expected = cat(1, parents...)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(parents...)
+        test = VirtualArray{Float64, num_dims}(parents...)
 
         parents[change_p][change_i...] = change_to
         expected = cat(1, parents...)
@@ -826,7 +784,7 @@ facts("Modifying values in a VirtualArray with mulit d arrays and expand in diff
         b = rand(dims...)
 
         expected = cat(expanded_dim, a, b)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, a,b)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, a,b)
 
         test[index_picked...] = num_picked
         expected[index_picked...] = num_picked
@@ -857,7 +815,7 @@ facts("Modifying values in a VirtualArray with mulit d arrays and expand in diff
         b = rand(dims...)
 
         expected = cat(expanded_dim, a, b)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, a,b)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, a,b)
 
         a[index_picked...] = num_picked
         expected = cat(expanded_dim, a, b)
@@ -895,7 +853,7 @@ facts("Modifying values in a VirtualArray with mulit d arrays and expand in diff
             ]
 
         expected = cat(expanded_dim, parents...)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
 
         test[combined_i...] = change_to
         expected[combined_i...] = change_to
@@ -933,7 +891,7 @@ facts("Modifying values in a VirtualArray with mulit d arrays and expand in diff
             ]
 
         expected = cat(expanded_dim, parents...)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
 
         parents[change_p][change_i...] = change_to
         expected = cat(expanded_dim, parents...)
@@ -958,7 +916,7 @@ facts("Accessing VirtualArray values oddly") do
         b = rand(len,len)
 
         expected = cat(1, a, b)
-        test = VirtualArray{Float64, 2, AbstractArray}(a,b)
+        test = VirtualArray{Float64, 2}(a,b)
 
         test[index_picked...] = num_picked
         expected[index_picked...] = num_picked
@@ -982,7 +940,7 @@ facts("Accessing VirtualArray values oddly") do
         b = rand(len,len)
 
         expected = cat(1, a, b)
-        test = VirtualArray{Float64, 2, AbstractArray}(a,b)
+        test = VirtualArray{Float64, 2}(a,b)
 
         test[index_picked..., oness...] = num_picked
         expected[index_picked..., oness...] = num_picked
@@ -1011,7 +969,7 @@ facts("Accessing VirtualArray values oddly") do
         end
 
         expected = cat(expanded_dim, parents...)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
 
         change_to = rand(1:10)
         change_i = rand(1:length(expected))
@@ -1039,7 +997,7 @@ facts("Accessing VirtualArray values oddly") do
         end
 
         expected = cat(expanded_dim, parents...)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
 
         change_to = rand(1:10)
         change_i = rand(1:length(expected))
@@ -1067,7 +1025,7 @@ facts("Accessing VirtualArray values oddly") do
         end
 
         expected = cat(expanded_dim, parents...)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
 
         change_to = rand(1:10)
         change_i = rand(1:length(expected))
@@ -1079,8 +1037,6 @@ facts("Accessing VirtualArray values oddly") do
 
     end
 end
-
-
 
 facts("Modifying values in a 1 d VirtualArray with 1 d arrays of different lengths") do
     context("modifying a value in the first parent from VirtualArray") do
@@ -1097,7 +1053,7 @@ facts("Modifying values in a 1 d VirtualArray with 1 d arrays of different lengt
         parents = Array[a, b]
 
         expected = cat(expanded_dim, parents...)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
 
         test[index_picked] = num_picked
         expected[index_picked] = num_picked
@@ -1120,7 +1076,7 @@ facts("Modifying values in a 1 d VirtualArray with 1 d arrays of different lengt
         parents = Array[a, b]
 
         expected = cat(expanded_dim, parents...)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
 
         test[index_picked + len] = num_picked
         expected[index_picked + len] = num_picked
@@ -1142,7 +1098,7 @@ facts("Modifying values in a 1 d VirtualArray with 1 d arrays of different lengt
         b = rand(len_2)
         parents = Array[a, b]
 
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
 
         a[index_picked] = num_picked
         expected = cat(expanded_dim, parents...)
@@ -1165,7 +1121,7 @@ facts("Modifying values in a 1 d VirtualArray with 1 d arrays of different lengt
         parents = Array[a, b]
 
         expected = cat(expanded_dim, parents...)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
 
         b[index_picked] = num_picked
         expected = cat(expanded_dim, parents...)
@@ -1191,7 +1147,7 @@ facts("modifying values of m d VirtualArrays with n d parents") do
         parents = Array[a, b]
 
         expected = cat(expanded_dim, parents...)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
 
         test[index_picked, 1] = num_picked
         expected[index_picked, 1] = num_picked
@@ -1213,7 +1169,7 @@ facts("modifying values of m d VirtualArrays with n d parents") do
         parents = Array[a, b]
 
         expected = cat(expanded_dim, parents...)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
 
         test[index_picked, 2] = num_picked
         expected[index_picked, 2] = num_picked
@@ -1235,7 +1191,7 @@ facts("modifying values of m d VirtualArrays with n d parents") do
         parents = Array[a, b]
 
         expected = cat(expanded_dim, parents...)
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
 
         a[index_picked] = num_picked
         expected = cat(expanded_dim, parents...)
@@ -1256,7 +1212,7 @@ facts("modifying values of m d VirtualArrays with n d parents") do
         b = rand(len)
         parents = Array[a, b]
 
-        test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
 
         b[index_picked] = num_picked
         expected = cat(expanded_dim, parents...)
@@ -1267,26 +1223,24 @@ facts("modifying values of m d VirtualArrays with n d parents") do
     end
 end
 
-
-
-
-
-
-
-#### ERRORS
-
-
-
-
+############################################################################################
+# ERRORS
+############################################################################################
 
 facts("Errors while using VirtualArray") do
     context("out of bounds indexing on 1 1d array") do
         len = rand(1:100)
         a = rand(len)
-        test = VirtualArray{Float64, 1, AbstractArray}(a)
+        test = VirtualArray{Float64, 1}(a)
         @fact_throws BoundsError test[-1]
         @fact_throws BoundsError test[0]
         @fact_throws BoundsError test[len+1]
+    end
+    context("tring to create a VirtualArray of the wrong type") do
+        len = rand(1:100)
+        a = rand(len)
+        @fact_throws MethodError test = VirtualArray{AbstractString, 1}(a)
+        @fact_throws InexactError test = VirtualArray{Int, 1}(a)
     end
     context("out of bounds indexing on multiple 1d arrays") do
         # set up
@@ -1297,14 +1251,14 @@ facts("Errors while using VirtualArray") do
         for i in 1:num_parents
             push!(parents, rand(len))
         end
-        test = VirtualArray{Float64, 1, AbstractArray}(parents...)
+        test = VirtualArray{Float64, 1}(parents...)
         @fact_throws BoundsError test[-1]
         @fact_throws BoundsError test[len*(num_parents)+1]
     end
     context("out of bounds setting on 1 1d array") do
         len = rand(1:100)
         a = rand(len)
-        test = VirtualArray{Float64, 1, AbstractArray}(a)
+        test = VirtualArray{Float64, 1}(a)
         @fact_throws BoundsError test[-1] = 1
         @fact_throws BoundsError test[len+1] = 1
     end
@@ -1317,7 +1271,7 @@ facts("Errors while using VirtualArray") do
         for i in 1:num_parents
             push!(parents, rand(len))
         end
-        test = VirtualArray{Float64, 1, AbstractArray}(parents...)
+        test = VirtualArray{Float64, 1}(parents...)
         @fact_throws BoundsError test[-1] = 1
         @fact_throws BoundsError test[len*(num_parents)+1] = 1
     end
@@ -1328,7 +1282,7 @@ facts("Errors while using VirtualArray") do
         b = rand(3,3,3)
 
         c = cat(1,a,b)
-        test = VirtualArray{Float64, 3, AbstractArray}(1, a, b)
+        test = VirtualArray{Float64, 3}(1, a, b)
 
         @fact_throws BoundsError c[6,4,1]
         @fact_throws BoundsError test[6,4,1]
@@ -1363,7 +1317,7 @@ facts("Errors while using VirtualArray") do
         parents = Array[a, b]
 
         @fact_throws DimensionMismatch expected = cat(expanded_dim, parents...)
-        @fact_throws DimensionMismatch test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        @fact_throws DimensionMismatch test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
 
         c_error = 1
         try
@@ -1374,7 +1328,7 @@ facts("Errors while using VirtualArray") do
 
         test_error = 1
         try
-            test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+            test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
         catch e
             test_error = e
         end
@@ -1393,6 +1347,6 @@ facts("Errors while using VirtualArray") do
         parents = Array[a, b]
 
         @fact_throws DimensionMismatch expected = cat(expanded_dim, parents...)
-        @fact_throws DimensionMismatch test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
+        @fact_throws DimensionMismatch test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
     end
 end

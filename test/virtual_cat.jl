@@ -11,7 +11,7 @@ facts("virtual_cat is like cat") do
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
         @fact eachindex(test) --> eachindex(expected)
-        @fact typeof(test).parameters[3].parameters[1] --> typeof(expected).parameters[1]
+        @fact typeof(test).parameters[1] --> typeof(expected).parameters[1]
         @fact typeof(test).parameters[2] --> typeof(expected).parameters[2]
     end
     context("concatenating one 1 d array") do
@@ -26,7 +26,7 @@ facts("virtual_cat is like cat") do
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
         @fact eachindex(test) --> eachindex(expected)
-        @fact typeof(test).parameters[3].parameters[1] --> typeof(expected).parameters[1]
+        @fact typeof(test).parameters[1] --> typeof(expected).parameters[1]
         @fact typeof(test).parameters[2] --> typeof(expected).parameters[2]
     end
     context("concatenating two 1 d arrays") do
@@ -43,7 +43,7 @@ facts("virtual_cat is like cat") do
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
         @fact eachindex(test) --> eachindex(expected)
-        @fact typeof(test).parameters[3].parameters[1] --> typeof(expected).parameters[1]
+        @fact typeof(test).parameters[1] --> typeof(expected).parameters[1]
         @fact typeof(test).parameters[2] --> typeof(expected).parameters[2]
     end
 end
@@ -63,7 +63,7 @@ facts("virtual_vcat is like vcat") do
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
         @fact eachindex(test) --> eachindex(expected)
-        @fact typeof(test).parameters[3].parameters[1] --> typeof(expected).parameters[1]
+        @fact typeof(test).parameters[1] --> typeof(expected).parameters[1]
         @fact typeof(test).parameters[2] --> typeof(expected).parameters[2]
     end
 end
@@ -83,7 +83,7 @@ facts("virtual_hcat is like hcat") do
         @fact length(test) --> length(expected)
         @fact size(test) --> size(expected)
         @fact eachindex(test) --> eachindex(expected)
-        @fact typeof(test).parameters[3].parameters[1] --> typeof(expected).parameters[1]
+        @fact typeof(test).parameters[1] --> typeof(expected).parameters[1]
         @fact typeof(test).parameters[2] --> typeof(expected).parameters[2]
     end
 end

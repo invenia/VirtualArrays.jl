@@ -7,15 +7,15 @@ import Base.size, Base.getindex, Base.length, Base.setindex!, Base.eachindex
 
 include("virtual_cat.jl")
 
-type VirtualArray{T,N,P<:AbstractArray} <: AbstractArray{T,N}
+type VirtualArray{T, N} <: AbstractArray{T, N}
     expanded_dim::Int # This is the dimension we expand along
-    parents::Array{P,1}
+    parents::Array{AbstractArray{T},1}
 
-    function VirtualArray(expanded_dim::Int, parents::P...)
+    function VirtualArray{T, N}(expanded_dim::Int, parents::AbstractArray{T,N}...)
         check_parents_dimensions(expanded_dim, parents...)
         return new(expanded_dim, Array[parent for parent in parents])
     end
-    function VirtualArray(parents::P...)
+    function VirtualArray{T, N}(parents::AbstractArray{T,N}...)
         check_parents_dimensions(1, parents...)
         return new(1, Array[parent for parent in parents])
     end
