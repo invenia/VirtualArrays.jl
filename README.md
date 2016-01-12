@@ -117,7 +117,7 @@ julia> a
 
 ## Memory Allocation
 
-Since we are not copying values, memory usage is much better, especially when using VirtualArray for large arrays. Below demonstrats the memory usage of concatenating different size arrays with `cat` and `virtual_cat`. As we see, `virtual_cat` consistently uses the same amount of memory, where as `cat` grows.
+Since we are not copying values, memory usage is much better, especially when using VirtualArray for large arrays. Below demonstrates the memory usage of concatenating different size arrays with `cat` and `virtual_cat`. As we see, `virtual_cat` consistently uses the same amount of memory, where as `cat` grows.
 
 ```julia
 julia> len = 1; a = collect(1:len); b = collect(1:len);
