@@ -1,3 +1,4 @@
+__precompile__(true)
 module VirtualArrays
 
 export VirtualArray, getindex, setindex!, size, length, eachindex

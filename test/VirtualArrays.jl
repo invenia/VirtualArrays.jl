@@ -1350,3 +1350,33 @@ facts("Errors while using VirtualArray") do
         @fact_throws DimensionMismatch test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
     end
 end
+
+############################################################################################
+# MEMORY ALLOCATION
+############################################################################################
+
+facts("Check the memory usage of VirtualArray") do
+    context("simple test") do
+        a = collect(1:1)
+
+        # Make sure everything is compiled before testing
+        VirtualArray{Int64, 1}(1,a)
+
+        expected = @allocated VirtualArray{Int64, 1}(1,a)
+
+        test = @allocated VirtualArray{Int64, 1}(1,a)
+        @fact test --> expected
+
+        a = collect(1:10)
+        test = @allocated VirtualArray{Int64, 1}(1,a)
+        @fact test --> expected
+
+        a = collect(1:10000)
+        test = @allocated VirtualArray{Int64, 1}(1,a)
+        @fact test --> expected
+
+        a = collect(1:10000000)
+        test = @allocated VirtualArray{Int64, 1}(1,a)
+        @fact test --> expected
+    end
+end
