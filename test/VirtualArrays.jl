@@ -1351,9 +1351,6 @@ facts("Errors while using VirtualArray") do
         @fact test_error.i --> c_error.i
 
     end
-
-
-
     context("trying to make an 2 d array of 1 d parents of different sizes") do
         # set up
         num_dims = 2
@@ -1383,37 +1380,6 @@ facts("Errors while using VirtualArray") do
         end
 
         @fact contains(c_error.msg, test_error.msg) --> true
-    end
-    context("trying to make a VirtualArray of dimensions x, but having the parents and expanded dimension be less than x") do
-        # set up
-        num_dims = rand(3:10)
-        len = rand(2:10) # no larger than 5
-        expanded_dim = rand(1:num_dims-1)
-
-        a = rand(len)
-        b = rand(len)
-        parents = Array[a, b]
-
-        @pending @fact_throws DimensionMismatch expected = Array{Int,num_dims}(cat(expanded_dim, parents...))
-        @pending @fact_throws MethodError test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
-
-        c_error = 1
-        try
-            expected = Array{Int,num_dims}(cat(expanded_dim, parents...))
-        catch e
-            c_error = e
-        end
-
-        test_error = 1
-        try
-            test = VirtualArray{Float64, num_dims, AbstractArray}(expanded_dim, parents...)
-        catch e
-            test_error = e
-        end
-
-        @pending test_error.args --> c_error.args
-        @pending test_error.f --> c_error.f
-        @pending test_error --> c_error
     end
     context("creating an 2 d VirtualArray with 2 d parents of different lengths on the wrong dimension") do
         # set up

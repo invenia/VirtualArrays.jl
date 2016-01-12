@@ -47,7 +47,7 @@ function length(v::VirtualArray)
     return total
 end
 
-function getindex{T,N}(v::VirtualArray{T,N}, i::Int...)
+function getindex(v::VirtualArray, i::Int...)
     checkbounds(v, i...)
     i = get_correct_index_value(v, i...)
 
@@ -59,7 +59,7 @@ function getindex{T,N}(v::VirtualArray{T,N}, i::Int...)
     end
 end
 
-function setindex!{T,N}(v::VirtualArray{T,N}, n, i::Int...)
+function setindex!(v::VirtualArray, n, i::Int...)
     checkbounds(v, i...)
     i = get_correct_index_value(v, i...)
 
