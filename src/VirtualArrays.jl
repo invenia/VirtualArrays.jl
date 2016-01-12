@@ -1,8 +1,10 @@
 module VirtualArrays
 
-export VirtualArray, getindex, setindex!, size, length, eachindex
+export VirtualArray, getindex, setindex!, size, length, eachindex, virtual_cat
 
 import Base.size, Base.getindex, Base.length, Base.setindex!, Base.eachindex
+
+include("virtual_cat.jl")
 
 type VirtualArray{T,N,P<:AbstractArray} <: AbstractArray{T,N}
     expanded_dim::Int # This is the dimension we expand along
