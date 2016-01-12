@@ -2,7 +2,8 @@
 
 A way to concatenate arrays without copying values.
 
-[![Build Status](https://travis-ci.org/invenia/VirtualArrays.jl.svg?branch=develop)](https://travis-ci.org/invenia/VirtualArrays.jl) [![codecov.io](https://codecov.io/github/invenia/VirtualArrays.jl/coverage.svg?branch=develop)](https://codecov.io/github/invenia/VirtualArrays.jl?branch=develop)
+[![Build Status](https://travis-ci.org/invenia/VirtualArrays.jl.svg?branch=develop)](https://travis-ci.org/invenia/VirtualArrays.jl) [![Build status](https://ci.appveyor.com/api/projects/status/9v6n6dh8i76o1p1d?svg=true)](https://ci.appveyor.com/project/samuel-massinon-invenia/virtualarrays-jl)
+ [![codecov.io](https://codecov.io/github/invenia/VirtualArrays.jl/coverage.svg?branch=develop)](https://codecov.io/github/invenia/VirtualArrays.jl?branch=develop)
 
 The goal of VirtualArray is to have something that acts exactly like `cat` but without copying the values of all the arrays into a new array. This can help with memory usage and allow you to change a value in a VirtualArray and have the change happen one of the parents and vice versa.
 
