@@ -1,6 +1,7 @@
 module VirtualArrays
 
-export VirtualArray, getindex, setindex!, size, length, eachindex, virtual_cat
+export VirtualArray, getindex, setindex!, size, length, eachindex
+export virtual_cat, virtual_vcat, virtual_hcat
 
 import Base.size, Base.getindex, Base.length, Base.setindex!, Base.eachindex
 

@@ -10,6 +10,14 @@ function virtual_cat{P}(expanded_dim::Int, parents::P...)
     return eval(expr)
 end
 
+function virtual_vcat{P}(parents::P...)
+    return virtual_cat(1, parents...)
+end
+
+function virtual_hcat{P}(parents::P...)
+    return virtual_cat(2, parents...)
+end
+
 function largest_dim(parents::AbstractArray...)
     largest = 0
     for parent in parents
