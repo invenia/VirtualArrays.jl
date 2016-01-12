@@ -10,6 +10,10 @@ function virtual_cat{P}(expanded_dim::Int, parents::P...)
     return eval(expr)
 end
 
+function virtual_cat(expanded_dim::Int)
+    return virtual_cat(expanded_dim, [])
+end
+
 function virtual_vcat{P}(parents::P...)
     return virtual_cat(1, parents...)
 end
