@@ -14,11 +14,11 @@ type VirtualArray{T, N} <: AbstractArray{T, N}
 
     function VirtualArray{T, N}(expanded_dim::Int, parents::AbstractArray{T,N}...)
         check_parents_dimensions(expanded_dim, parents...)
-        return new(expanded_dim, Array[parent for parent in parents])
+        return new(expanded_dim, AbstractArray[parent for parent in parents])
     end
     function VirtualArray{T, N}(parents::AbstractArray{T,N}...)
         check_parents_dimensions(1, parents...)
-        return new(1, Array[parent for parent in parents])
+        return new(1, AbstractArray[parent for parent in parents])
     end
 end
 
@@ -80,7 +80,6 @@ function expand_index(v::VirtualArray, i::Int...)
     len_needed = length(size(v))
     len_have = length(i)
 
-    divide_by = 1
     for at in len_have:len_needed - 1
         last_value = result[end]
         result[end] = fix_zero_index(last_value, size(v)[at])
