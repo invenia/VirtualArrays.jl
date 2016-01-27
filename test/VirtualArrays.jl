@@ -429,6 +429,7 @@ facts("Creating VirtualArrays oddly") do
         @fact eachindex(test) --> eachindex(expected)
     end
 end
+
 ############################################################################################
 # MODIFYING
 ############################################################################################
@@ -530,6 +531,26 @@ facts("Modifying values in a VirtualArray with 1 d arrays") do
         @fact test.parents[change_p][change_i] --> change_to
         @fact test[(change_p-1)*len+change_i] --> change_to
         @fact test --> expected
+
+    end
+    context("changing a value when the parent is a subarray") do
+
+        # set up
+        len = rand(1:100)
+        change_to = rand(1:1000)
+        change_i = rand(1:len)
+        parent = rand(Int64, len)
+        sub_array = sub(parent, 1:len)
+
+        test = VirtualArray{Int64, 1}(sub_array)
+
+        test[change_i] = change_to
+
+        @fact test.parents[1][change_i] --> change_to
+        @fact parent[change_i] --> change_to
+        @fact sub_array[change_i] --> change_to
+        @fact test --> parent
+        @fact test --> sub_array
 
     end
 end
