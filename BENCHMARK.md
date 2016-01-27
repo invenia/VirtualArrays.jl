@@ -30,13 +30,13 @@ cat_bench() = cat(1, parents...)
 
 num_test = 100
 
-benchmark(virtual_cat_bench, "virtual_cat", "virtual_cat(1, parents...)", num_test)
-benchmark(virtual_vcat_bench, "virtual_vcat", "virtual_vcat(parents...)", num_test)
-benchmark(virtual_hcat_bench, "virtual_hcat", "virtual_hcat(parents...)", num_test)
-benchmark(constructor_1, "constructor_1", "VirtualArray{Int64, 1}(parents...)", num_test)
-benchmark(constructor_2, "constructor_2", "VirtualArray{Int64, 1}(1, parents...)", num_test)
-benchmark(constructor_3, "constructor_3", "VirtualArray{Int64, 1}(1, parents...)", num_test)
-benchmark(constructor_4, "constructor_4", "VirtualArray{Int64, 2}(2, parents...)", num_test)
+display(benchmark(virtual_cat_bench, "virtual_cat", "virtual_cat(1, parents...)", num_test))
+display(benchmark(virtual_vcat_bench, "virtual_vcat", "virtual_vcat(parents...)", num_test))
+display(benchmark(virtual_hcat_bench, "virtual_hcat", "virtual_hcat(parents...)", num_test))
+display(benchmark(constructor_1, "constructor_1", "VirtualArray{Int64, 1}(parents...)", num_test))
+display(benchmark(constructor_2, "constructor_2", "VirtualArray{Int64, 1}(1, parents...)", num_test))
+display(benchmark(constructor_3, "constructor_3", "VirtualArray{Int64, 1}(1, parents...)", num_test))
+display(benchmark(constructor_4, "constructor_4", "VirtualArray{Int64, 2}(2, parents...)", num_test))
 
 v = VirtualArray{Int64, 1}(1, parents...)
 
@@ -44,29 +44,29 @@ get_index_bench1() = v[1]
 get_index_bench2() = v[1000000]
 get_index_bench3() = v[end]
 
-benchmark(get_index_bench1, "getting first index", "v[1]", num_test)
-benchmark(get_index_bench2, "getting last index", "v[1000000]", num_test)
-benchmark(get_index_bench3, "getting last index with end", "v[end]", num_test)
+display(benchmark(get_index_bench1, "getting first index", "v[1]", num_test))
+display(benchmark(get_index_bench2, "getting last index", "v[1000000]", num_test))
+display(benchmark(get_index_bench3, "getting last index with end", "v[end]", num_test))
 
 set_index_bench1() = v[1] = 1
 set_index_bench2() = v[1000000] = 1
 set_index_bench3() = v[end] = 1
 
-benchmark(set_index_bench1, "setting first index", "v[1] = 1", num_test)
-benchmark(set_index_bench2, "setting last index", "v[1000000] = 1", num_test)
-benchmark(set_index_bench3, "setting last index with end", "v[end] = 1", num_test)
+display(benchmark(set_index_bench1, "setting first index", "v[1] = 1", num_test))
+display(benchmark(set_index_bench2, "setting last index", "v[1000000] = 1", num_test))
+display(benchmark(set_index_bench3, "setting last index with end", "v[end] = 1", num_test))
 
 size_bench() = size(v)
 
-benchmark(size_bench, "size of v", "size(v)", num_test)
+display(benchmark(size_bench, "size of v", "size(v)", num_test))
 
 length_bench() = length(v)
 
-benchmark(length_bench, "length of v", "length(v)", num_test)
+display(benchmark(length_bench, "length of v", "length(v)", num_test))
 
 eachindex_bench() = eachindex(v)
 
-benchmark(eachindex_bench, "eachindex of v", "eachindex(v)", num_test)
+display(benchmark(eachindex_bench, "eachindex of v", "eachindex(v)", num_test))
 ```
 
 ### Results
