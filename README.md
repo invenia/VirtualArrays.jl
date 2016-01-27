@@ -9,6 +9,14 @@ The goal of VirtualArray is to have something that acts exactly like `cat` but w
 
 Otherwise, VirtualArray should act like any other array.
 
+## installation
+
+To install, just run `Pkg.add("VirtualArrays")`.
+
+## Benchmark
+
+The result of the benchmark are [here](BENCHMARK.md).
+
 ## Usage
 
 The preferred way of using VirtualArrays is through `virtual_cat`. Which is suppose to act like `cat`, as shown below.
