@@ -9,7 +9,7 @@ The goal of VirtualArray is to have something that acts exactly like `cat` but w
 
 Otherwise, VirtualArray should act like any other array.
 
-## installation
+## Installation
 
 To install, just run `Pkg.add("VirtualArrays")`.
 
