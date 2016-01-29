@@ -12,8 +12,8 @@ facts("Creating a VirtualArray") do
         b = collect(num:num+len)
         expected = cat(1,a,b)
 
-        test = VirtualArray{Int64, 1}(a,b)
-        test_2 = VirtualArray{Int64, 1}(1,a,b)
+        test = VirtualArray{Int, 1}(a,b)
+        test_2 = VirtualArray{Int, 1}(1,a,b)
 
         @fact test.parents[1] --> a
         @fact test.parents[2] --> b
@@ -25,8 +25,8 @@ facts("Creating a VirtualArray") do
     end
     context("one parent") do
         a = collect(1:9)
-        test = VirtualArray{Int64, 1}(a)
-        test_2 = VirtualArray{Int64, 1}(1, a)
+        test = VirtualArray{Int, 1}(a)
+        test_2 = VirtualArray{Int, 1}(1, a)
         expected = cat(1,a)
 
         @fact test.parents[1] --> a
@@ -48,8 +48,8 @@ facts("Creating a VirtualArray") do
         end
 
         expected = cat(1, parents...)
-        test = VirtualArray{Int64, 1}(parents...)
-        test_2 = VirtualArray{Int64, 1}(1, parents...)
+        test = VirtualArray{Int, 1}(parents...)
+        test_2 = VirtualArray{Int, 1}(1, parents...)
 
         @fact test.parents --> parents
         @fact length(test.parents) --> num_parents
@@ -447,7 +447,7 @@ facts("Modifying values in a VirtualArray with 1 d arrays") do
         b = collect(num:num+len)
 
         expected = cat(1, a, b)
-        test = VirtualArray{Int64, 1}(a,b)
+        test = VirtualArray{Int, 1}(a,b)
 
         test[index_picked] = num_picked
         expected[index_picked] = num_picked
@@ -470,7 +470,7 @@ facts("Modifying values in a VirtualArray with 1 d arrays") do
         b = collect(num:num+len)
 
         expected = cat(1, a, b)
-        test = VirtualArray{Int64, 1}(a,b)
+        test = VirtualArray{Int, 1}(a,b)
 
         a[index_picked] = num_picked
         expected = cat(1, a, b)
@@ -497,7 +497,7 @@ facts("Modifying values in a VirtualArray with 1 d arrays") do
         end
 
         expected = cat(1, parents...)
-        test = VirtualArray{Int64, 1}(parents...)
+        test = VirtualArray{Int, 1}(parents...)
 
         test[(change_p-1)*len+change_i] = change_to
         expected[(change_p-1)*len+change_i] = change_to
@@ -523,7 +523,7 @@ facts("Modifying values in a VirtualArray with 1 d arrays") do
         end
 
         expected = cat(1, parents...)
-        test = VirtualArray{Int64, 1}(parents...)
+        test = VirtualArray{Int, 1}(parents...)
 
         parents[change_p][change_i] = change_to
         expected = cat(1, parents...)
@@ -539,10 +539,10 @@ facts("Modifying values in a VirtualArray with 1 d arrays") do
         len = rand(1:100)
         change_to = rand(1:1000)
         change_i = rand(1:len)
-        parent = rand(Int64, len)
+        parent = rand(Int, len)
         sub_array = sub(parent, 1:len)
 
-        test = VirtualArray{Int64, 1}(sub_array)
+        test = VirtualArray{Int, 1}(sub_array)
 
         test[change_i] = change_to
 
@@ -1381,23 +1381,23 @@ facts("Check the memory usage of VirtualArray") do
         a = collect(1:1)
 
         # Make sure everything is compiled before testing
-        VirtualArray{Int64, 1}(1,a)
+        VirtualArray{Int, 1}(1,a)
 
-        expected = @allocated VirtualArray{Int64, 1}(1,a)
+        expected = @allocated VirtualArray{Int, 1}(1,a)
 
-        test = @allocated VirtualArray{Int64, 1}(1,a)
+        test = @allocated VirtualArray{Int, 1}(1,a)
         @fact test --> expected
 
         a = collect(1:10)
-        test = @allocated VirtualArray{Int64, 1}(1,a)
+        test = @allocated VirtualArray{Int, 1}(1,a)
         @fact test --> expected
 
         a = collect(1:10000)
-        test = @allocated VirtualArray{Int64, 1}(1,a)
+        test = @allocated VirtualArray{Int, 1}(1,a)
         @fact test --> expected
 
         a = collect(1:10000000)
-        test = @allocated VirtualArray{Int64, 1}(1,a)
+        test = @allocated VirtualArray{Int, 1}(1,a)
         @fact test --> expected
     end
 end
