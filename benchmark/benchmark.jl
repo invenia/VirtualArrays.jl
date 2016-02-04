@@ -163,6 +163,15 @@ open(joinpath(Pkg.dir("VirtualArrays"), "benchmark", "benchmark_result"), "w") d
     println(benchmark_file, benchmark(addition_normal_bench, "addition normal array", "n + 1", num_test))
     println(benchmark_file, compare([addition_virtual_bench, addition_normal_bench], num_test))
 
+    print_seperator(benchmark_file, "multiplication")
+
+    multiplication_virtual_bench() = v * 2
+    multiplication_normal_bench() = n * 2
+
+    println(benchmark_file, benchmark(multiplication_virtual_bench, "multiplication virtual array", "v * 1", num_test))
+    println(benchmark_file, benchmark(multiplication_normal_bench, "multiplication normal array", "n * 1", num_test))
+    println(benchmark_file, compare([multiplication_virtual_bench, multiplication_normal_bench], num_test))
+
     print_seperator(benchmark_file, "size")
 
     size_virtual_bench() = size(v)
@@ -207,6 +216,7 @@ open(joinpath(Pkg.dir("VirtualArrays"), "benchmark", "benchmark_result"), "w") d
         set_index_virtual_front_half_bench, set_index_virtual_end_half_bench,
         set_index_virtual_entire_bench1, set_index_virtual_entire_bench2,
         addition_virtual_bench,
+        multiplication_virtual_bench,
         size_virtual_bench,
         length_virtual_bench,
         eachindex_virtual_bench
@@ -228,6 +238,7 @@ open(joinpath(Pkg.dir("VirtualArrays"), "benchmark", "benchmark_result"), "w") d
         set_index_normal_front_half_bench, set_index_normal_end_half_bench,
         set_index_normal_entire_bench1, set_index_normal_entire_bench2,
         addition_normal_bench,
+        multiplication_normal_bench,
         size_normal_bench,
         length_normal_bench,
         eachindex_normal_bench
@@ -255,6 +266,7 @@ open(joinpath(Pkg.dir("VirtualArrays"), "benchmark", "benchmark_result"), "w") d
         set_index_normal_front_half_bench, set_index_normal_end_half_bench,
         set_index_normal_entire_bench1, set_index_normal_entire_bench2,
         addition_virtual_bench, addition_normal_bench,
+        multiplication_virtual_bench, multiplication_normal_bench,
         size_virtual_bench, size_normal_bench,
         length_virtual_bench, length_normal_bench,
         eachindex_virtual_bench, eachindex_normal_bench
