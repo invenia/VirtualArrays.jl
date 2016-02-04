@@ -13,9 +13,25 @@ Otherwise, VirtualArray should act like any other array.
 
 To install, just run `Pkg.add("VirtualArrays")`.
 
-## Benchmark
+## Benchmarking VirtualArray
 
-The result of the benchmark are [here](BENCHMARK.md).
+Checking the performance of VirtualArray
+
+### To run these BenchMarks
+
+You need `Benchmark.jl`, which you can get [here](https://github.com/johnmyleswhite/Benchmark.jl).
+
+In the `VirtualArray` directory, run `julia benchmark/benchmark.jl`. 
+
+The results of that tests are stored in [benchmark/benchmark_result](benchmark/benchmark_result).
+
+### Test Ran
+
+The code I used to benchmark can be found [here](benchmark/benchmark.jl).
+
+### Results
+
+The results of the test are [here](benchmark/benchmark_result).
 
 ## Usage
 
