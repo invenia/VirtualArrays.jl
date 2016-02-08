@@ -70,13 +70,19 @@ function getindex{T, N}(v::VirtualArray{T, N}, i::UnitRange...)
     i = collect(i)
 
     result = []
+    started = false
     for parent in v.parents
         parent_exp_size = get_dimension_size(parent, v.expanded_dim)
         if i[v.expanded_dim].start <= parent_exp_size
             index = (i[1:v.expanded_dim - 1]...,
                 max(1,i[v.expanded_dim].start):min(parent_exp_size,i[v.expanded_dim].stop),
-                i[1:v.expanded_dim - 1]...)
-            result = cat(length(i), result, parent[index...])
+                i[v.expanded_dim + 1:end]...)
+            if started
+                result = cat(v.expanded_dim, result, parent[index...])
+            else
+                result = parent[index...]
+                started = true
+            end
         end
         if i[v.expanded_dim].stop <= parent_exp_size
             return result
