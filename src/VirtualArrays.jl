@@ -51,6 +51,8 @@ function length(v::VirtualArray)
     return total
 end
 
+getindex(v::VirtualArray) = nothing
+
 function getindex(v::VirtualArray, i::Int...)
     checkbounds(v, i...)
     i = expand_index(v, i...)
@@ -60,6 +62,26 @@ function getindex(v::VirtualArray, i::Int...)
             return parent[i...]
         end
         i[v.expanded_dim] -= get_dimension_size(parent, v.expanded_dim)
+    end
+end
+
+function getindex{T, N}(v::VirtualArray{T, N}, i::UnitRange...)
+    checkbounds(v, i...)
+    i = collect(i)
+
+    result = []
+    for parent in v.parents
+        parent_exp_size = get_dimension_size(parent, v.expanded_dim)
+        if i[v.expanded_dim].start <= parent_exp_size
+            index = (i[1:v.expanded_dim - 1]...,
+                max(1,i[v.expanded_dim].start):min(parent_exp_size,i[v.expanded_dim].stop),
+                i[1:v.expanded_dim - 1]...)
+            result = cat(length(i), result, parent[index...])
+        end
+        if i[v.expanded_dim].stop <= parent_exp_size
+            return result
+        end
+        i[v.expanded_dim] -= parent_exp_size
     end
 end
 
