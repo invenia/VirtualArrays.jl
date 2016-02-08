@@ -1,5 +1,10 @@
 using VirtualArrays
-using Base.Test
+if VERSION >= v"0.5-"
+    using Base.Test
+else
+    using BaseTestNext
+    const Test = BaseTestNext
+end
 using FactCheck
 
 include("virtual_cat.jl")
