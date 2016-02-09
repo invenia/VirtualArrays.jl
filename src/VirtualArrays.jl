@@ -65,31 +65,35 @@ function getindex(v::VirtualArray, i::Int...)
     end
 end
 
-function getindex{T, N}(v::VirtualArray{T, N}, i::UnitRange...)
-    checkbounds(v, i...)
-    i = collect(i)
-
-    result = []
-    started = false
-    for parent in v.parents
-        parent_exp_size = get_dimension_size(parent, v.expanded_dim)
-        if i[v.expanded_dim].start <= parent_exp_size
-            index = (i[1:v.expanded_dim - 1]...,
-                max(1,i[v.expanded_dim].start):min(parent_exp_size,i[v.expanded_dim].stop),
-                i[v.expanded_dim + 1:end]...)
-            if started
-                result = cat(v.expanded_dim, result, parent[index...])
-            else
-                result = parent[index...]
-                started = true
-            end
-        end
-        if i[v.expanded_dim].stop <= parent_exp_size
-            return result
-        end
-        i[v.expanded_dim] -= parent_exp_size
-    end
-end
+#function getindex{T, N}(v::VirtualArray{T, N}, i::UnitRange...)
+#    checkbounds(v, i...)
+#    i = collect(i)
+#
+#    result = []
+#    started = false
+#    for parent in v.parents
+#        parent_exp_size = get_dimension_size(parent, v.expanded_dim)
+#        if i[v.expanded_dim].start <= parent_exp_size
+#            index = (i[1:v.expanded_dim - 1]...,
+#                max(1,i[v.expanded_dim].start):min(parent_exp_size,i[v.expanded_dim].stop),
+#                i[v.expanded_dim + 1:end]...)
+#            println(index)
+#            println(result)
+#            display(parent[index...])
+#            println(length(i))
+#            if started
+#                result = cat(v.expanded_dim, result, parent[index...])
+#            else
+#                result = parent[index...]
+#                started = true
+#            end
+#        end
+#        if i[v.expanded_dim].stop <= parent_exp_size
+#            return result
+#        end
+#        i[v.expanded_dim] -= parent_exp_size
+#    end
+#end
 
 function setindex!(v::VirtualArray, n, i::Int...)
     checkbounds(v, i...)
