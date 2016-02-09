@@ -1537,14 +1537,63 @@ end
             @test test == expected
 
         end
-        @testset "getting a range value in multi M d parent like an N d range where N is < expanded dim" begin
+        @testset "getting a range value in multi M d parent like an N d range where N is < expanded dim and expanded dim < M" begin
 
             # set up
             # keep these numbers small because we can run out of memory or get very slow tests
             num_parents = rand(3:10) # no larger than 10
             num_dims = rand(3:6) # no larger than 6
             len = rand(2:5) # no larger than 5
-            expanded_dim = rand(2:num_dims)
+            expanded_dim = rand(2:num_dims-1)
+
+            dims = zeros(Int, num_dims) + len
+
+            parents = []
+            for i in 1:num_parents
+                push!(parents, rand(dims...))
+            end
+            change_to = rand(1:10)
+            change_p_start = rand(1:num_parents-1)
+            change_p_end = rand(change_p_start+1:num_parents)
+            change_start = rand(1:len)
+            change_end = rand(1:len)
+            change_range_expanded_dim = (change_p_start-1)*len+change_start:(change_p_end-1)*len+change_end
+
+            range_dim = rand(1:expanded_dim-1)
+
+            change_range = []
+            for i in 1:range_dim-1
+                if i != expanded_dim
+                    change_start = rand(1:len)
+                    change_end = rand(change_start:len)
+                    push!(change_range, change_start:change_end)
+                else
+                    push!(change_range, change_range_expanded_dim)
+                end
+            end
+
+            expected = cat(expanded_dim, parents...)
+            test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
+
+            end_left = 1
+            for i in range_dim:num_dims
+                end_left *= size(test)[i]
+            end
+
+            push!(change_range, 1:end_left)
+
+            @test test[change_range...] == expected[change_range...]
+            @test test == expected
+
+        end
+        @testset "getting a range value in multi M d parent like an N d range where N is < expanded dim and expanded dim = M" begin
+
+            # set up
+            # keep these numbers small because we can run out of memory or get very slow tests
+            num_parents = rand(3:10) # no larger than 10
+            num_dims = rand(3:6) # no larger than 6
+            len = rand(2:5) # no larger than 5
+            expanded_dim = num_dims
 
             dims = zeros(Int, num_dims) + len
 
