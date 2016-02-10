@@ -96,7 +96,7 @@ function getindex{T, N}(v::VirtualArray{T, N}, i::UnitRange...)
             i[v.expanded_dim] -= parent_exp_size
         end
 
-    elseif v.expanded_dim > i_dim
+    elseif v.expanded_dim >= i_dim
         result = []
 
         num_a_s = 1
@@ -107,14 +107,14 @@ function getindex{T, N}(v::VirtualArray{T, N}, i::UnitRange...)
         r = i[end]
 
         started = false
-        for k in 1:N
+        for k in 1:num_a_s
             for parent in v.parents
                 length = 1
                 for j in i_dim:v.expanded_dim
                     length *= get_dimension_size(parent, j)
                 end
                 length_before_exp = 1
-                for j in 1:v.expanded_dim
+                for j in i_dim:v.expanded_dim
                     length_before_exp *= get_dimension_size(parent, j)
                 end
                 if i[end].start <= length
@@ -127,22 +127,58 @@ function getindex{T, N}(v::VirtualArray{T, N}, i::UnitRange...)
                     #display(parent[index...])
                     #display(parent)
                     if started
-                        result = cat(i_dim, result, parent[index[1:end-1]...,index[end] + length_before_exp * (k-1)])
+                        push!(result, parent[index[1:end-1]...,index[end] + length_before_exp * (k-1)])
                     else
                         #println(index[end] + length_before_exp * (k-1))
-                        result = parent[index[1:end-1]...,index[end] + length_before_exp * (k-1)]
+                        push!(result, parent[index[1:end-1]...,index[end] + length_before_exp * (k-1)])
                         started = true
                     end
                 end
                 if i[end].stop <= length
-                    return result
+                    return cat(i_dim, result...)
                 end
                 i[end] -= length
             end
         end
+    elseif v.expanded_dim < i_dim
+                result = []
 
-    else
-        return cat(v.expanded_dim, v.parents...)[i...]
+        num_a_s = 1
+        for j in v.expanded_dim+1:N
+            num_a_s *= size(v)[j]
+        end
+
+        r = i[end]
+
+        started = false
+        for k in 1:num_a_s
+            for parent in v.parents
+                parent_exp_size = get_dimension_size(parent, v.expanded_dim)
+                if i[v.expanded_dim].start <= parent_exp_size
+                    index = (i[1:v.expanded_dim - 1]...,
+                        max(1,i[v.expanded_dim].start):min(parent_exp_size,i[v.expanded_dim].stop),
+                        i[v.expanded_dim + 1:end]...)
+                    #println(index)
+                    #println(length)
+                    #println(i[end].stop)
+                    #println(result)
+                    #display(parent[index...])
+                    #display(parent)
+                    if started
+                        result = cat(v.expanded_dim, result, parent[index...])
+                    else
+                        result = parent[index...]
+                        started = true
+                    end
+                end
+                if i[v.expanded_dim].stop <= parent_exp_size
+                    return result
+                end
+                i[v.expanded_dim] -= parent_exp_size
+            end
+        end
+    #else
+    #    return cat(v.expanded_dim, v.parents...)[i...]
     end
 end
 
