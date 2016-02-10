@@ -72,26 +72,16 @@ function getindex{T, N}(v::VirtualArray{T, N}, i::UnitRange...)
 
     if N == i_dim
         result = []
-        started = false
         for parent in v.parents
             parent_exp_size = get_dimension_size(parent, v.expanded_dim)
             if i[v.expanded_dim].start <= parent_exp_size
                 index = (i[1:v.expanded_dim - 1]...,
                     max(1,i[v.expanded_dim].start):min(parent_exp_size,i[v.expanded_dim].stop),
                     i[v.expanded_dim + 1:end]...)
-                #println(index)
-                #println(result)
-                #display(parent[index...])
-                #println(length(i))
-                if started
-                    result = cat(v.expanded_dim, result, parent[index...])
-                else
-                    result = parent[index...]
-                    started = true
-                end
+                push!(result, parent[index...])
             end
             if i[v.expanded_dim].stop <= parent_exp_size
-                return result
+                return cat(v.expanded_dim, result...)
             end
             i[v.expanded_dim] -= parent_exp_size
         end
@@ -106,7 +96,6 @@ function getindex{T, N}(v::VirtualArray{T, N}, i::UnitRange...)
 
         r = i[end]
 
-        started = false
         for k in 1:num_a_s
             for parent in v.parents
                 length = 1
@@ -120,19 +109,7 @@ function getindex{T, N}(v::VirtualArray{T, N}, i::UnitRange...)
                 if i[end].start <= length
                     index = (i[1:end - 1]...,
                         max(1,i[end].start):min(length,i[end].stop))
-                    #println(index)
-                    #println(length)
-                    #println(i[end].stop)
-                    #println(result)
-                    #display(parent[index...])
-                    #display(parent)
-                    if started
-                        push!(result, parent[index[1:end-1]...,index[end] + length_before_exp * (k-1)])
-                    else
-                        #println(index[end] + length_before_exp * (k-1))
-                        push!(result, parent[index[1:end-1]...,index[end] + length_before_exp * (k-1)])
-                        started = true
-                    end
+                    push!(result, parent[index[1:end-1]...,index[end] + length_before_exp * (k-1)])
                 end
                 if i[end].stop <= length
                     return cat(i_dim, result...)
@@ -150,7 +127,6 @@ function getindex{T, N}(v::VirtualArray{T, N}, i::UnitRange...)
 
         r = i[end]
 
-        started = false
         for k in 1:num_a_s
             for parent in v.parents
                 parent_exp_size = get_dimension_size(parent, v.expanded_dim)
@@ -158,21 +134,10 @@ function getindex{T, N}(v::VirtualArray{T, N}, i::UnitRange...)
                     index = (i[1:v.expanded_dim - 1]...,
                         max(1,i[v.expanded_dim].start):min(parent_exp_size,i[v.expanded_dim].stop),
                         i[v.expanded_dim + 1:end]...)
-                    #println(index)
-                    #println(length)
-                    #println(i[end].stop)
-                    #println(result)
-                    #display(parent[index...])
-                    #display(parent)
-                    if started
-                        result = cat(v.expanded_dim, result, parent[index...])
-                    else
-                        result = parent[index...]
-                        started = true
-                    end
+                    push!(result, parent[index...])
                 end
                 if i[v.expanded_dim].stop <= parent_exp_size
-                    return result
+                    return cat(v.expanded_dim, result...)
                 end
                 i[v.expanded_dim] -= parent_exp_size
             end
