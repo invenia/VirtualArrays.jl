@@ -1586,7 +1586,7 @@ end
             @test test == expected
 
         end
-        @testset "getting a range value in multi M d parent like an N d range where N is < expanded dim and expanded dim < M and the length of the dimension after the expanded dim is > number of dimensions" begin
+        @testset "getting a range value in multi M d parent like an N d range where N is < expanded dim, expanded dim < M, and length of last dim > number of dim" begin
 
             # set up
             # keep these numbers small because we can run out of memory or get very slow tests

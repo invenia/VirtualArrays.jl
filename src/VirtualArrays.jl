@@ -71,46 +71,14 @@ function getindex{T, N}(v::VirtualArray{T, N}, i::UnitRange...)
     i_dim = length(i)
 
     if N == i_dim || v.expanded_dim < i_dim
-        result = []
-        for parent in v.parents
-            parent_exp_size = get_dimension_size(parent, v.expanded_dim)
-            if i[v.expanded_dim].start <= parent_exp_size
-                index = (i[1:v.expanded_dim - 1]...,
-                    max(1,i[v.expanded_dim].start):min(parent_exp_size,i[v.expanded_dim].stop),
-                    i[v.expanded_dim + 1:end]...)
-                push!(result, parent[index...])
-            end
-            if i[v.expanded_dim].stop <= parent_exp_size
-                return cat(v.expanded_dim, result...)
-            end
-            i[v.expanded_dim] -= parent_exp_size
-        end
-
-    elseif v.expanded_dim >= i_dim
-        result = []
-
-        num_a_s = 1
+        getindex_range(v, i...)
+    else
+        num_runs = 1
         for j in v.expanded_dim+1:N
-            num_a_s *= size(v)[j]
+            num_runs *= size(v)[j]
         end
 
-        for k in 1:num_a_s
-            for parent in v.parents
-                length = 1
-                for j in i_dim:v.expanded_dim
-                    length *= get_dimension_size(parent, j)
-                end
-                if i[end].start <= length
-                    index = (i[1:end - 1]...,
-                        max(1,i[end].start):min(length,i[end].stop))
-                    push!(result, parent[index[1:end-1]...,index[end] + length * (k-1)])
-                end
-                if i[end].stop <= length
-                    return cat(i_dim, result...)
-                end
-                i[end] -= length
-            end
-        end
+        getindex_range(v, i..., num_runs=num_runs)
     end
 end
 
@@ -176,6 +144,55 @@ function check_parents_dimensions(ignore_dim::Int, parents::AbstractArray...)
                     throw(DimensionMismatch("mismatch in dimension $i"))
                 end
             end
+        end
+    end
+end
+
+function getindex_range(v::AbstractArray, i::UnitRange...; num_runs::Int=1)
+    result = []
+    i = collect(i)
+
+    # For indexing when we have to go through the parents multiple times.
+    # For example, a 3d Virtual Array expanded along the 2nd dimensions and 1d indexing
+    for j in 1:num_runs
+        for parent in v.parents
+
+            # This tells us which index in i we need to change to get the
+            # index the user is asking for
+            shifting_index = min(length(i), v.expanded_dim)
+
+            # We alter the shifting_index by this much to abstract the array of arrays
+            # We need to calculate it like this in case our indexing is < the expansion dimension
+            # We need to calcualte for each parent because parents can have different
+            # expanded dimensions length
+            shift_by = 1
+            for k in shifting_index:v.expanded_dim
+                shift_by *= get_dimension_size(parent, k)
+            end
+
+            # If we have found an index that should be included in the result
+            if i[shifting_index].start <= shift_by
+
+                # We need to index into the parent at the right spot
+                start_index = max(1,i[shifting_index].start)
+                end_index = min(shift_by,i[shifting_index].stop)
+                shifting_range = start_index:end_index
+
+                # If we are going through the parents multiple times, we need to adjust accordingly
+                shifting_range += shift_by * (j - 1)
+
+                index = (i[1:shifting_index - 1]..., shifting_range, i[shifting_index + 1:end]...)
+
+                push!(result, parent[index...])
+            end
+
+            # If we are done adding indexes to our results
+            if i[shifting_index].stop <= shift_by
+                return cat(shifting_index, result...)
+            end
+
+            # Moving onto the next one
+            i[shifting_index] -= shift_by
         end
     end
 end
