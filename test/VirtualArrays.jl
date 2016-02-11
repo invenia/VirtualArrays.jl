@@ -1782,6 +1782,28 @@ end
             @test test == expected
 
         end
+        @testset "getting a range value with nothing in the square brackets" begin
+            # set up
+            # keep these numbers small because we can run out of memory or get very slow tests
+            num_parents = rand(3:10) # no larger than 10
+            num_dims = rand(3:6) # no larger than 6
+            len = rand(2:5) # no larger than 5
+            expanded_dim = rand(1:num_dims)
+
+            dims = zeros(Int, num_dims) + len
+
+            parents = []
+            for i in 1:num_parents
+                push!(parents, rand(dims...))
+            end
+
+            expected = cat(expanded_dim, parents...)
+            test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
+
+            @test test[] == expected[]
+            @test test[] == test[1]
+            @test test == expected
+        end
     end
     @testset "range setindex" begin
         @testset "setting a range value in one 1 d parent" begin

@@ -51,7 +51,7 @@ function length(v::VirtualArray)
     return total
 end
 
-getindex(v::VirtualArray) = nothing
+getindex(v::VirtualArray) = getindex(v::VirtualArray, 1)
 
 function getindex(v::VirtualArray, i::Int...)
     checkbounds(v, i...)
