@@ -83,7 +83,7 @@ function getindex{T, N}(v::VirtualArray{T, N}, i::UnitRange...)
     end
 end
 
-setindex!(v::VirtualArray, n) = setindex(v::VirtualArray, n, 1)
+setindex!(v::VirtualArray, n) = setindex!(v::VirtualArray, n, 1)
 
 function setindex!(v::VirtualArray, n, i::Int...)
     checkbounds(v, i...)

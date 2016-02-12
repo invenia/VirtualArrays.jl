@@ -2000,6 +2000,33 @@ end
             @test test == expected
 
         end
+        @testset "setting with nothing in the brackets" begin
+
+            # set up
+            # keep these numbers small because we can run out of memory or get very slow tests
+            num_parents = rand(3:10) # no larger than 10
+            num_dims = rand(3:6) # no larger than 6
+            len = rand(2:5) # no larger than 5
+            expanded_dim = rand(1:num_dims)
+
+            dims = zeros(Int, num_dims) + len
+
+            parents = []
+            for i in 1:num_parents
+                push!(parents, rand(dims...))
+            end
+            change_to = rand(1:10)
+
+            test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
+
+            change_to = rand(1:10)
+            test[] = change_to
+            expected = cat(expanded_dim, parents...)
+
+            @test test[1] == expected[1]
+            @test test == expected
+
+        end
         @testset "setting a range value in multi M d parent like an N d range and change value is an array" begin
 
             # set up
