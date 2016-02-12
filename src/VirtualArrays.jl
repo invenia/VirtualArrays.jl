@@ -223,8 +223,6 @@ function setindex_range(v::AbstractArray, n, i::UnitRange...; num_runs::Int=1)
     n_index = get_n_index(i...)
     n_shift_index = 1
 
-    println(n_index)
-
     # For indexing when we have to go through the parents multiple times.
     # For example, a 3d Virtual Array expanded along the 2nd dimensions and 1d indexing
     for j in 1:num_runs
@@ -256,16 +254,12 @@ function setindex_range(v::AbstractArray, n, i::UnitRange...; num_runs::Int=1)
 
                 index = (i[1:shifting_index - 1]..., shifting_range, i[shifting_index + 1:end]...)
 
+                # We want to get everything in n, except for the part that is in the expanded dimension
                 n_temp_index = (n_index[1:shifting_index-1]...,
-                    n_shift_index:n_shift_index+shift_by-1,
+                    n_shift_index:n_shift_index+length(shifting_range)-1,
                     n_index[shifting_index+1:end]...)
 
-                n_shift_index += shift_by
-
-                #println(parent[index...])
-                #println(get_n(n, n_temp_index...))
-                println(index)
-                println(n_temp_index)
+                n_shift_index += length(shifting_range)
 
                 parent[index...] = get_n(n, n_temp_index...)
             end

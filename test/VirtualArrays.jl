@@ -2054,11 +2054,14 @@ end
 
             change_to = rand(Int, lengths...)
 
-            test[change_range...] = change_to
-            expected = cat(expanded_dim, parents...)
+            expected_before = cat(expanded_dim, parents...)
+            resturned_test = test[change_range...] = change_to
+            resturned_expected = expected_before[change_range...] = change_to
+            expected_after = cat(expanded_dim, parents...)
 
-            @test test[change_range...] == expected[change_range...]
-            @test test == expected
+            @test resturned_test == resturned_expected
+            @test test[change_range...] == expected_after[change_range...]
+            @test test == expected_after
 
         end
     end
