@@ -10,7 +10,7 @@ function print_seperator(file::IOStream, name::AbstractString)
     println(file)
 end
 
-open(joinpath(Pkg.dir("VirtualArrays"), "benchmark", "benchmark_result"), "w") do benchmark_file
+open(joinpath(dirname(@__FILE__), "benchmark_result"), "w") do benchmark_file
     num_parents = 10
     len = 100
     num_test = 100
