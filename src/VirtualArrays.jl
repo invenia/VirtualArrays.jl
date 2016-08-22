@@ -8,6 +8,7 @@ import Base.size, Base.getindex, Base.length, Base.setindex!, Base.eachindex
 
 include("virtual_cat.jl")
 
+
 type VirtualArray{T, N} <: AbstractArray{T, N}
     expanded_dim::Int # This is the dimension we expand along
     parents::Array{AbstractArray{T},1}
@@ -82,6 +83,8 @@ function getindex{T, N}(v::VirtualArray{T, N}, i::UnitRange...)
     end
 end
 
+setindex!(v::VirtualArray, n) = setindex!(v::VirtualArray, n, 1)
+
 function setindex!(v::VirtualArray, n, i::Int...)
     checkbounds(v, i...)
     i = expand_index(v, i...)
@@ -91,6 +94,23 @@ function setindex!(v::VirtualArray, n, i::Int...)
             return parent[i...] = n
         end
         i[v.expanded_dim] -= get_dimension_size(parent, v.expanded_dim)
+    end
+end
+
+function setindex!{T, N}(v::VirtualArray{T, N}, n, i::UnitRange...)
+    checkbounds(v, i...)
+    i = collect(i)
+    i_dim = length(i)
+
+    if N == i_dim || v.expanded_dim < i_dim
+        setindex_range(v, n, i...)
+    else
+        num_runs = 1
+        for j in v.expanded_dim+1:N
+            num_runs *= size(v)[j]
+        end
+
+        setindex_range(v, n, i..., num_runs=num_runs)
     end
 end
 
@@ -194,6 +214,80 @@ function getindex_range(v::AbstractArray, i::UnitRange...; num_runs::Int=1)
             # Moving onto the next one
             i[shifting_index] -= shift_by
         end
+    end
+end
+
+function setindex_range(v::AbstractArray, n, i::UnitRange...; num_runs::Int=1)
+    i = collect(i)
+
+    n_index = get_n_index(i...)
+    n_shift_index = 1
+
+    # For indexing when we have to go through the parents multiple times.
+    # For example, a 3d Virtual Array expanded along the 2nd dimensions and 1d indexing
+    for j in 1:num_runs
+        for parent in v.parents
+
+            # This tells us which index in i we need to change to get the
+            # index the user is asking for
+            shifting_index = min(length(i), v.expanded_dim)
+
+            # We alter the shifting_index by this much to abstract the array of arrays
+            # We need to calculate it like this in case our indexing is < the expansion dimension
+            # We need to calcualte for each parent because parents can have different
+            # expanded dimensions length
+            shift_by = 1
+            for k in shifting_index:v.expanded_dim
+                shift_by *= get_dimension_size(parent, k)
+            end
+
+            # If we have found an index that should be included in the result
+            if i[shifting_index].start <= shift_by
+
+                # We need to index into the parent at the right spot
+                start_index = max(1,i[shifting_index].start)
+                end_index = min(shift_by,i[shifting_index].stop)
+                shifting_range = start_index:end_index
+
+                # If we are going through the parents multiple times, we need to adjust accordingly
+                shifting_range += shift_by * (j - 1)
+
+                index = (i[1:shifting_index - 1]..., shifting_range, i[shifting_index + 1:end]...)
+
+                # We want to get everything in n, except for the part that is in the expanded dimension
+                n_temp_index = (n_index[1:shifting_index-1]...,
+                    n_shift_index:n_shift_index+length(shifting_range)-1,
+                    n_index[shifting_index+1:end]...)
+
+                n_shift_index += length(shifting_range)
+
+                parent[index...] = get_n(n, n_temp_index...)
+            end
+
+            # If we are done adding indexes to our results
+            if i[shifting_index].stop <= shift_by
+                return n
+            end
+
+            # Moving onto the next one
+            i[shifting_index] -= shift_by
+        end
+    end
+end
+
+function get_n_index(i::UnitRange...)
+    n_index = []
+    for r in i
+        push!(n_index, 1:length(r))
+    end
+    return n_index
+end
+
+function get_n(n, i::UnitRange...)
+    if typeof(n) <: AbstractArray
+        return n[i...]
+    else
+        return n
     end
 end
 

@@ -1537,6 +1537,58 @@ end
             @test test == expected
 
         end
+        @testset "getting a range value in multi M d parent like an N d range where last range is not 1:end" begin
+
+            # set up
+            # keep these numbers small because we can run out of memory or get very slow tests
+            num_parents = rand(3:10) # no larger than 10
+            num_dims = rand(3:6) # no larger than 6
+            len = rand(2:5) # no larger than 5
+            expanded_dim = rand(1:num_dims)
+
+            dims = zeros(Int, num_dims) + len
+
+            parents = []
+            for i in 1:num_parents
+                push!(parents, rand(dims...))
+            end
+            change_to = rand(1:10)
+            change_p_start = rand(1:num_parents-1)
+            change_p_end = rand(change_p_start+1:num_parents)
+            change_start = rand(1:len)
+            change_end = rand(1:len)
+            change_range_expanded_dim = (change_p_start-1)*len+change_start:(change_p_end-1)*len+change_end
+
+            range_dim = rand(1:num_dims-1) # there's a chance we don't have an index on the expanded_dim
+
+            change_range = []
+            for i in 1:range_dim-1
+                if i != expanded_dim
+                    change_start = rand(1:len)
+                    change_end = rand(change_start:len)
+                    push!(change_range, change_start:change_end)
+                else
+                    push!(change_range, change_range_expanded_dim)
+                end
+            end
+
+            expected = cat(expanded_dim, parents...)
+            test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
+
+            end_left = 1
+            for i in range_dim:num_dims
+                end_left *= size(test)[i]
+            end
+
+            start = rand(1:end_left)
+            last = rand(start:end_left)
+
+            push!(change_range, start:last)
+
+            @test test[change_range...] == expected[change_range...]
+            @test test == expected
+
+        end
         @testset "getting a range value in multi M d parent like an N d range where N is < expanded dim and expanded dim < M" begin
 
             # set up
@@ -1946,6 +1998,97 @@ end
 
             @test test[change_range...] == expected[change_range...]
             @test test == expected
+
+        end
+        @testset "setting with nothing in the brackets" begin
+
+            # set up
+            # keep these numbers small because we can run out of memory or get very slow tests
+            num_parents = rand(3:10) # no larger than 10
+            num_dims = rand(3:6) # no larger than 6
+            len = rand(2:5) # no larger than 5
+            expanded_dim = rand(1:num_dims)
+
+            dims = zeros(Int, num_dims) + len
+
+            parents = []
+            for i in 1:num_parents
+                push!(parents, rand(dims...))
+            end
+            change_to = rand(1:10)
+
+            test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
+
+            change_to = rand(1:10)
+            test[] = change_to
+            expected = cat(expanded_dim, parents...)
+
+            @test test[1] == expected[1]
+            @test test == expected
+
+        end
+        @testset "setting a range value in multi M d parent like an N d range and change value is an array" begin
+
+            # set up
+            # keep these numbers small because we can run out of memory or get very slow tests
+            num_parents = rand(3:10) # no larger than 10
+            num_dims = rand(3:6) # no larger than 6
+            len = rand(2:5) # no larger than 5
+            expanded_dim = rand(1:num_dims)
+
+            dims = zeros(Int, num_dims) + len
+
+            parents = []
+            for i in 1:num_parents
+                push!(parents, rand(dims...))
+            end
+            change_p_start = rand(1:num_parents-1)
+            change_p_end = rand(change_p_start+1:num_parents)
+            change_start = rand(1:len)
+            change_end = rand(1:len)
+            change_range_expanded_dim = (change_p_start-1)*len+change_start:(change_p_end-1)*len+change_end
+
+            range_dim = rand(1:num_dims-1) # there's a chance we don't have an index on the expanded_dim
+
+            change_range = []
+            for i in 1:range_dim-1
+                if i != expanded_dim
+                    change_start = rand(1:len)
+                    change_end = rand(change_start:len)
+                    push!(change_range, change_start:change_end)
+                else
+                    push!(change_range, change_range_expanded_dim)
+                end
+            end
+
+            expected = cat(expanded_dim, parents...)
+            test = VirtualArray{Float64, num_dims}(expanded_dim, parents...)
+
+            end_left = 1
+            for i in range_dim:num_dims
+                end_left *= size(test)[i]
+            end
+
+            start = rand(1:end_left)
+            last = rand(start:end_left)
+
+            push!(change_range, start:last)
+
+            lengths = []
+            for i in change_range
+                push!(lengths, length(i))
+            end
+
+            change_to = rand(Int, lengths...)
+
+            expected_before = cat(expanded_dim, parents...)
+            resturned_test = test[change_range...] = change_to
+            resturned_expected = expected_before[change_range...] = change_to
+            expected_after = cat(expanded_dim, parents...)
+
+            @test resturned_test == resturned_expected
+            @test test[change_range...] == expected_after[change_range...]
+            @test test == expected_after
 
         end
     end
